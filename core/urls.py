@@ -3,16 +3,28 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
+
+# Authentication URL patterns
+auth_patterns = [
+    path('login/', auth_views.LoginView.as_view(
+        template_name='users/login.html',
+        redirect_authenticated_user=True
+    ), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(
+        next_page='products:product_list'
+    ), name='logout'),
+]
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('', include('apps.products.urls')),
-    path('', include('apps.orders.urls')),
-    path('', include('apps.users.urls')),
+    path('admin/', admin.site.urls),
+    path('', RedirectView.as_view(url='products/', permanent=False)),
+    path('products/', include('apps.products.urls')),
+    path('orders/', include('apps.orders.urls')),
+    path('users/', include('apps.users.urls')),
     
     # Authentication URLs
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='products:product_list'), name='logout'),
+    path('auth/', include((auth_patterns, 'auth'))),
 ]
 
 # Serve static and media files in development

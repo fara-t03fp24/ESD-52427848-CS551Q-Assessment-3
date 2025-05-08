@@ -11,10 +11,9 @@ class User(AbstractUser, BaseModel):
     """
     full_name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
-    email = models.EmailField(unique=True, null=True, blank=True)
-    username = models.CharField(max_length=150, unique=True, default='user')
+    email = models.EmailField(unique=True)
+    username = None  # Disable username field
 
-    # Override groups and user_permissions with custom related_names
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
@@ -30,8 +29,8 @@ class User(AbstractUser, BaseModel):
         related_query_name='custom_user'
     )
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 
@@ -39,4 +38,4 @@ class User(AbstractUser, BaseModel):
         db_table = 'user'
 
     def __str__(self) -> str:
-        return str(self.full_name or self.username)
+        return self.email
