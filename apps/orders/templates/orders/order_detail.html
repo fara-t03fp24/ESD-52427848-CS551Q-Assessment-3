@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} - 3D Printing Shop{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Order #{{ order.id }}</h3>
+                    <span class="badge {% if order.status == 'pending' %}bg-warning
+                                   {% elif order.status == 'processing' %}bg-info
+                                   {% elif order.status == 'printing' %}bg-primary
+                                   {% elif order.status == 'shipped' %}bg-success
+                                   {% elif order.status == 'delivered' %}bg-success
+                                   {% else %}bg-danger{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Order Details</h5>
+                    <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y, P" }}</p>
+                    <p><strong>Payment Status:</strong> 
+                        {% if order.payment_status %}
+                            <span class="text-success">Paid</span>
+                        {% else %}
+                            <span class="text-danger">Pending</span>
+                        {% endif %}
+                    </p>
+                    {% if order.estimated_delivery_date %}
+                        <p><strong>Estimated Delivery:</strong> {{ order.estimated_delivery_date|date:"F j, Y" }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <h5>Shipping Address</h5>
+                    <p>{{ order.shipping_address|linebreaks }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Order Items</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.product.images.exists %}
+                                                    <img src="{{ item.product.images.first.image.url }}" 
+                                                         alt="{{ item.product.name }}" 
+                                                         style="width: 50px; height: 50px; object-fit: cover;"
+                                                         class="me-3">
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                    <small class="text-muted">
+                                                        {{ item.product.material_type }} - 
+                                                        Print time: {{ item.product.print_time_hours }}h
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${{ item.price }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>${{ item.total_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><strong>${{ order.total_amount }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                {% if order.status == 'pending' %}
+                    <form method="post" action="{% url 'orders:cancel_order' order.id %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cancel Order</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Order Status Timeline</h5>
+                <div class="timeline mt-3">
+                    <div class="timeline-item {% if order.status == 'pending' %}active{% endif %}">
+                        <span class="badge bg-warning">Pending</span>
+                        <small>Order placed</small>
+                    </div>
+                    <div class="timeline-item {% if order.status == 'processing' %}active{% endif %}">
+                        <span class="badge bg-info">Processing</span>
+                        <small>Order confirmed</small>
+                    </div>
+                    <div class="timeline-item {% if order.status == 'printing' %}active{% endif %}">
+                        <span class="badge bg-primary">Printing</span>
+                        <small>3D printing in progress</small>
+                    </div>
+                    <div class="timeline-item {% if order.status == 'shipped' %}active{% endif %}">
+                        <span class="badge bg-info">Shipped</span>
+                        <small>Order shipped</small>
+                    </div>
+                    <div class="timeline-item {% if order.status == 'delivered' %}active{% endif %}">
+                        <span class="badge bg-success">Delivered</span>
+                        <small>Order completed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-left: 2px solid #dee2e6;
+    padding-left: 20px;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -11px;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 50%;
+}
+
+.timeline-item.active::before {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.timeline-item .badge {
+    margin-right: 10px;
+}
+</style>
+{% endblock %}
+{% endblock %}

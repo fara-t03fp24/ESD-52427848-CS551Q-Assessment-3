@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - 3D Printing Shop{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Shopping Cart</h1>
+
+{% if cart.items.exists %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.images.exists %}
+                                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                <small class="text-muted">{{ item.product.material_type }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${{ item.product.price }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'orders:update_cart' item.id %}" class="d-flex align-items-center">
+                                            {% csrf_token %}
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="form-control form-control-sm" style="width: 70px;">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Update</button>
+                                        </form>
+                                    </td>
+                                    <td>${{ item.total_price }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'orders:remove_from_cart' item.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <span>${{ cart.total_price }}</span>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center">
+        <p class="lead">Your cart is empty</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+    </div>
+{% endif %}
+{% endblock %}
