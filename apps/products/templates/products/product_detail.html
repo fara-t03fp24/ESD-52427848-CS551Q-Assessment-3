@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - 3D Printing Shop{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Product Images -->
+    <div class="col-md-6 mb-4">
+        {% if product.images.exists %}
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in product.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.name }}">
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if product.images.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-md-6">
+        <h1 class="mb-3">{{ product.name }}</h1>
+        <p class="text-muted">Category: {{ product.category.name }}</p>
+        
+        <div class="mb-4">
+            <h4 class="text-primary">${{ product.price }}</h4>
+            <p class="mb-2">Stock: {% if product.stock > 0 %}{{ product.stock }} available{% else %}Out of stock{% endif %}</p>
+        </div>
+
+        <div class="mb-4">
+            <h5>Technical Details</h5>
+            <ul class="list-unstyled">
+                <li><strong>Print Time:</strong> {{ product.print_time_hours }} hours</li>
+                <li><strong>Material:</strong> {{ product.material_type }}</li>
+                <li><strong>Difficulty Level:</strong> {{ product.get_difficulty_level_display }}</li>
+                <li><strong>Weight:</strong> {{ product.weight_grams }}g</li>
+                <li><strong>Dimensions:</strong> {{ product.dimensions }}</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h5>Description</h5>
+            <p>{{ product.description }}</p>
+        </div>
+
+        {% if product.stock > 0 %}
+            <form method="post" action="{% url 'orders:add_to_cart' product.id %}" class="mb-4">
+                {% csrf_token %}
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </div>
+                </div>
+            </form>
+        {% else %}
+            <div class="alert alert-warning">
+                This item is currently out of stock.
+            </div>
+        {% endif %}
+
+        {% if user == product.seller %}
+            <div class="mt-4">
+                <a href="{% url 'products:product_update' product.slug %}" class="btn btn-outline-primary me-2">Edit Product</a>
+                <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-outline-danger">Delete Product</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
