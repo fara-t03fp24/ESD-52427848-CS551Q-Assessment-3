@@ -60,8 +60,9 @@
     <main class="container my-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -73,11 +74,13 @@
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6 d-flex align-items-center">
-                    <img src="{{ MEDIA_URL }}icon.png" alt="PrintCraft Icon" class="footer-icon me-3">
-                    <div class="footer-logo">
-                        <h5 class="mb-1 footer-brand">PrintCraft</h5>
-                        <p class="mb-0 footer-tagline">3D • Create • Print • Share</p>
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img src="{{ MEDIA_URL }}icon.png" alt="PrintCraft Icon" class="footer-icon">
+                        <div class="footer-logo">
+                            <h5 class="footer-brand">PrintCraft</h5>
+                            <span class="footer-tagline">3D • Create • Print • Share</span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end">
@@ -87,6 +90,7 @@
         </div>
     </footer>
 
+    <!-- Bootstrap JS bundle for basic UI components only -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>

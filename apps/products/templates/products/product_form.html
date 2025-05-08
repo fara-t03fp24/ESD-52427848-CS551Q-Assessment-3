@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title mb-4">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Product</h2>
-                <form method="post" enctype="multipart/form-data" id="productForm">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     {% if form.errors %}
@@ -25,17 +25,20 @@
                     <div class="mb-3">
                         <label class="form-label">Product Images</label>
                         <div class="image-upload-container">
-                            <div class="image-preview-container mb-3" id="imagePreviewContainer">
-                                {% if product.images.exists %}
+                            {% if product.images.exists %}
+                                <div class="image-grid mb-3">
                                     {% for image in product.images.all %}
-                                        <div class="image-preview">
-                                            <img src="{{ image.image.url }}" alt="Product image">
-                                            <button type="button" class="btn-remove" data-image-id="{{ image.id }}">×</button>
+                                        <div class="image-preview-wrapper">
+                                            <img src="{{ image.image.url }}" alt="Product image" class="image-preview">
+                                            <div class="image-actions">
+                                                <input type="checkbox" name="remove_images" value="{{ image.id }}" id="remove_{{ image.id }}">
+                                                <label for="remove_{{ image.id }}" class="remove-label">Remove</label>
+                                            </div>
                                         </div>
                                     {% endfor %}
-                                {% endif %}
-                            </div>
-                            <input type="file" class="form-control" id="product_images" name="product_images" multiple accept="image/*">
+                                </div>
+                            {% endif %}
+                            <input type="file" class="form-control" name="product_images" multiple accept="image/*">
                             <small class="form-text text-muted">Upload one or more product images. The first image will be used as the primary image.</small>
                         </div>
                     </div>
@@ -177,60 +180,4 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const imageInput = document.getElementById('product_images');
-    const previewContainer = document.getElementById('imagePreviewContainer');
-
-    imageInput.addEventListener('change', function(e) {
-        const files = e.target.files;
-
-        for (let file of files) {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewDiv = document.createElement('div');
-                    previewDiv.className = 'image-preview';
-                    
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = 'Product image preview';
-                    
-                    const removeBtn = document.createElement('button');
-                    removeBtn.type = 'button';
-                    removeBtn.className = 'btn-remove';
-                    removeBtn.innerHTML = '×';
-                    removeBtn.onclick = function() {
-                        previewDiv.remove();
-                    };
-
-                    previewDiv.appendChild(img);
-                    previewDiv.appendChild(removeBtn);
-                    previewContainer.appendChild(previewDiv);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    });
-
-    // Handle existing image removal
-    const existingRemoveButtons = document.querySelectorAll('.btn-remove[data-image-id]');
-    existingRemoveButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const imageId = this.dataset.imageId;
-            if (confirm('Are you sure you want to remove this image?')) {
-                // Add image ID to a hidden input for backend processing
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'remove_images';
-                hiddenInput.value = imageId;
-                document.getElementById('productForm').appendChild(hiddenInput);
-                
-                // Remove preview
-                this.closest('.image-preview').remove();
-            }
-        });
-    });
-});
-</script>
 {% endblock %}

@@ -1,30 +1,47 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ product.name }} - 3D Printing Shop{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'products/css/product_detail.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="row">
     <!-- Product Images -->
     <div class="col-md-6 mb-4">
         {% if product.images.exists %}
-            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    {% for image in product.images.all %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.name }}">
-                        </div>
-                    {% endfor %}
+            <div class="product-gallery">
+                <div class="main-image">
+                    {% with main_image=product.images.first %}
+                        <img src="{{ main_image.image.url }}" alt="{{ product.name }}" 
+                             class="img-fluid rounded" data-bs-toggle="modal" data-bs-target="#imageModal"
+                             style="cursor: pointer;">
+                    {% endwith %}
                 </div>
                 {% if product.images.count > 1 %}
-                    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                    <div class="thumbnail-grid mt-3">
+                        {% for image in product.images.all %}
+                            <img src="{{ image.image.url }}" alt="{{ product.name }}" class="thumbnail"
+                                 data-bs-toggle="modal" data-bs-target="#imageModal">
+                        {% endfor %}
+                    </div>
                 {% endif %}
+            </div>
+
+            <!-- Image Modal -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body p-0">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" 
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" 
+                                 class="img-fluid">
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
