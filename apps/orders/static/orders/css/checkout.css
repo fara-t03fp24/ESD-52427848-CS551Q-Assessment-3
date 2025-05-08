@@ -1,0 +1,8 @@
+.form-control {
+    margin-bottom: 0.5rem;
+}
+
+.invalid-feedback {
+    display: block;
+    margin-bottom: 1rem;
+}

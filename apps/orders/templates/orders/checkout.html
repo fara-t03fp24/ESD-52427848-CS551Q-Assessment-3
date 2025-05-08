@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Checkout - 3D Printing Shop{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'orders/css/checkout.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -76,16 +81,4 @@
         </div>
     </div>
 </div>
-
-{% block extra_css %}
-<style>
-    .form-control {
-        margin-bottom: 0.5rem;
-    }
-    .invalid-feedback {
-        display: block;
-        margin-bottom: 1rem;
-    }
-</style>
-{% endblock %}
 {% endblock %}

@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Order #{{ order.id }} - 3D Printing Shop{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'orders/css/order_detail.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -128,45 +133,4 @@
         </div>
     </div>
 </div>
-
-{% block extra_css %}
-<style>
-.timeline {
-    position: relative;
-    padding-left: 30px;
-}
-
-.timeline-item {
-    position: relative;
-    padding-bottom: 1.5rem;
-    border-left: 2px solid #dee2e6;
-    padding-left: 20px;
-}
-
-.timeline-item:last-child {
-    border-left: none;
-}
-
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -11px;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #dee2e6;
-    background: white;
-    border-radius: 50%;
-}
-
-.timeline-item.active::before {
-    background: #0d6efd;
-    border-color: #0d6efd;
-}
-
-.timeline-item .badge {
-    margin-right: 10px;
-}
-</style>
-{% endblock %}
 {% endblock %}
