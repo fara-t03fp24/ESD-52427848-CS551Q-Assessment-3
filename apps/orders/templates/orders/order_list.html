@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}My Orders - 3D Printing Shop{% endblock %}
+{% block title %}My Print Orders - PrintCraft{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">My Orders</h1>
+<h1 class="mb-4"><i class="fas fa-print me-2"></i>My Print Orders</h1>
 
 {% if orders %}
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Total Amount</th>
-                    <th>Actions</th>
+                    <th><i class="fas fa-cube me-1"></i>Order ID</th>
+                    <th><i class="fas fa-calendar-alt me-1"></i>Date</th>
+                    <th><i class="fas fa-spinner me-1"></i>Status</th>
+                    <th><i class="fas fa-money-bill me-1"></i>Total Amount</th>
+                    <th><i class="fas fa-sliders me-1"></i>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,16 +29,26 @@
                                              {% elif order.status == 'shipped' %}bg-success
                                              {% elif order.status == 'delivered' %}bg-success
                                              {% else %}bg-danger{% endif %}">
+                                <i class="fas {% if order.status == 'pending' %}fa-hourglass-half
+                                           {% elif order.status == 'processing' %}fa-cog fa-spin
+                                           {% elif order.status == 'printing' %}fa-print
+                                           {% elif order.status == 'shipped' %}fa-truck-fast
+                                           {% elif order.status == 'delivered' %}fa-box-check
+                                           {% else %}fa-triangle-exclamation{% endif %} me-1"></i>
                                 {{ order.get_status_display }}
                             </span>
                         </td>
-                        <td>${{ order.total_amount }}</td>
+                        <td><i class="fas fa-dollar-sign me-1"></i>{{ order.total_amount }}</td>
                         <td>
-                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-cube me-1"></i>View Model Details
+                            </a>
                             {% if order.status == 'pending' %}
                                 <form method="post" action="{% url 'orders:cancel_order' order.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel Order</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-print-slash me-1"></i>Cancel Print
+                                    </button>
                                 </form>
                             {% endif %}
                         </td>
@@ -49,8 +59,10 @@
     </div>
 {% else %}
     <div class="text-center">
-        <p class="lead">You haven't placed any orders yet.</p>
-        <a href="{% url 'products:product_list' %}" class="btn btn-primary">Start Shopping</a>
+        <p class="lead"><i class="fas fa-cubes me-2"></i>You haven't ordered any 3D prints yet.</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+            <i class="fas fa-shapes me-1"></i>Browse 3D Models
+        </a>
     </div>
 {% endif %}
 {% endblock %}

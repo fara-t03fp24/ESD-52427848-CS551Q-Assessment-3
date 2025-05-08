@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Shopping Cart - 3D Printing Shop{% endblock %}
+{% block title %}Print Queue - PrintCraft{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Shopping Cart</h1>
+<h1 class="mb-4"><i class="fas fa-layer-group me-2"></i>Print Queue</h1>
 
 {% if cart.items.exists %}
     <div class="row">
@@ -13,11 +13,11 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th>Actions</th>
+                                <th><i class="fas fa-cube me-1"></i>3D Model</th>
+                                <th><i class="fas fa-tag me-1"></i>Price</th>
+                                <th><i class="fas fa-layer-group me-1"></i>Copies</th>
+                                <th><i class="fas fa-calculator me-1"></i>Total</th>
+                                <th><i class="fas fa-sliders me-1"></i>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,27 +26,36 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             {% if item.product.images.exists %}
-                                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
                                             {% endif %}
                                             <div>
                                                 <h6 class="mb-0">{{ item.product.name }}</h6>
-                                                <small class="text-muted">{{ item.product.material_type }}</small>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-shapes me-1"></i>{{ item.product.material_type }}
+                                                </small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>${{ item.product.price }}</td>
+                                    <td><i class="fas fa-dollar-sign me-1"></i>{{ item.product.price }}</td>
                                     <td>
                                         <form method="post" action="{% url 'orders:update_cart' item.id %}" class="d-flex align-items-center">
                                             {% csrf_token %}
-                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="form-control form-control-sm" style="width: 70px;">
-                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Update</button>
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                                   min="1" max="{{ item.product.stock }}" 
+                                                   class="form-control form-control-sm" style="width: 70px;">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
                                         </form>
                                     </td>
-                                    <td>${{ item.total_price }}</td>
+                                    <td><i class="fas fa-dollar-sign me-1"></i>{{ item.total_price }}</td>
                                     <td>
                                         <form method="post" action="{% url 'orders:remove_from_cart' item.id %}">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-minus-circle me-1"></i>Remove
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
@@ -60,14 +69,26 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Order Summary</h5>
+                    <h5 class="card-title">
+                        <i class="fas fa-calculator me-2"></i>Print Summary
+                    </h5>
                     <hr>
                     <div class="d-flex justify-content-between mb-3">
-                        <span>Subtotal:</span>
-                        <span>${{ cart.total_price }}</span>
+                        <span>
+                            <i class="fas fa-clock me-1"></i>Total Print Time:
+                        </span>
+                        <span>{{ cart.total_print_time_hours }} hours</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>
+                            <i class="fas fa-money-bill me-1"></i>Subtotal:
+                        </span>
+                        <span><i class="fas fa-dollar-sign me-1"></i>{{ cart.total_price }}</span>
                     </div>
                     <div class="d-grid">
-                        <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                        <a href="{% url 'orders:checkout' %}" class="btn btn-primary">
+                            <i class="fas fa-print me-1"></i>Proceed to Print
+                        </a>
                     </div>
                 </div>
             </div>
@@ -75,8 +96,12 @@
     </div>
 {% else %}
     <div class="text-center">
-        <p class="lead">Your cart is empty</p>
-        <a href="{% url 'products:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+        <p class="lead">
+            <i class="fas fa-layer-group me-2"></i>Your print queue is empty
+        </p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+            <i class="fas fa-shapes me-1"></i>Browse 3D Models
+        </a>
     </div>
 {% endif %}
 {% endblock %}
