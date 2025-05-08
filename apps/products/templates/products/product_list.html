@@ -5,18 +5,23 @@
 {% block content %}
 <div class="row">
     <!-- Filters -->
-    <div class="col-md-3 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-sliders me-2"></i>Filter Models</h5>
+    <div class="col-md-3">
+        <div class="filter-card sticky-top">
+            <div class="filter-section">
+                <h5 class="card-title mb-4"><i class="fas fa-filter me-2"></i>Filter Models</h5>
                 <form method="get" action="{% url 'products:product_list' %}">
-                    <div class="mb-3">
-                        <label for="q" class="form-label"><i class="fas fa-magnifying-glass me-2"></i>Search Models</label>
-                        <input type="text" class="form-control" id="q" name="q" value="{{ query }}">
+                    <div class="filter-group">
+                        <label for="q" class="form-label">
+                            <i class="fas fa-search me-2"></i>Search Models
+                        </label>
+                        <input type="text" class="form-control search-input" id="q" name="q" 
+                               value="{{ query }}" placeholder="Search by name or category" autofocus>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="category" class="form-label"><i class="fas fa-shapes me-2"></i>Category</label>
+                    <div class="filter-group">
+                        <label for="category" class="form-label">
+                            <i class="fas fa-shapes me-2"></i>Category
+                        </label>
                         <select class="form-select" id="category" name="category">
                             <option value="">All Categories</option>
                             {% for category in categories %}
@@ -27,8 +32,10 @@
                         </select>
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="sort" class="form-label"><i class="fas fa-sort me-2"></i>Sort by</label>
+                    <div class="filter-group">
+                        <label for="sort" class="form-label">
+                            <i class="fas fa-sort me-2"></i>Sort by
+                        </label>
                         <select class="form-select" id="sort" name="sort">
                             <option value="">Latest Models</option>
                             <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
@@ -37,9 +44,16 @@
                         </select>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter me-2"></i>Apply Filters
-                    </button>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+                        {% if query or current_category or current_sort %}
+                            <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary w-100 reset-filters">
+                                <i class="fas fa-undo me-2"></i>Reset Filters
+                            </a>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
         </div>
@@ -50,7 +64,7 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for product in products %}
                 <div class="col">
-                    <div class="card h-100">
+                    <div class="card product-card h-100">
                         {% if product.images.exists %}
                             <div class="position-relative">
                                 <img src="{{ product.images.first.image.url }}" class="card-img-top" alt="{{ product.name }}">
@@ -92,8 +106,39 @@
                 </div>
             {% empty %}
                 <div class="col-12">
-                    <div class="alert alert-info">
-                        <i class="fas fa-cube me-2"></i>No 3D models found matching your criteria.
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <h4 class="empty-state-text">
+                            {% if query or current_category %}
+                                <i class="fas fa-search-minus me-2"></i>No 3D models found matching your criteria
+                            {% else %}
+                                <i class="fas fa-cube me-2"></i>No 3D models available yet
+                            {% endif %}
+                        </h4>
+                        
+                        {% if query or current_category %}
+                            <p class="text-muted">Try adjusting your search or filters</p>
+                            <div class="tag-cloud">
+                                <span class="badge bg-secondary">Miniatures</span>
+                                <span class="badge bg-secondary">Tools</span>
+                                <span class="badge bg-secondary">Gadgets</span>
+                                <span class="badge bg-secondary">Art</span>
+                                <span class="badge bg-secondary">Home</span>
+                            </div>
+                        {% endif %}
+                        
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Upload Your First Model
+                            </a>
+                        {% else %}
+                            <p class="mb-3">Want to share your 3D designs with the community?</p>
+                            <a href="{% url 'users:register' %}" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Join PrintCraft
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
