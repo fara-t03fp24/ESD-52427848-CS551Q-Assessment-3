@@ -1,5 +1,6 @@
 from django import forms
-from .models import Product, ProductImage
+from .models import Product, ProductImage, Shop
+from django.utils.text import slugify
 
 
 class ProductForm(forms.ModelForm):
@@ -8,7 +9,8 @@ class ProductForm(forms.ModelForm):
         fields = [
             'name', 'category', 'description', 'price', 
             'stock', 'print_time_hours', 'material_type',
-            'difficulty_level', 'weight_grams', 'dimensions'
+            'difficulty_level', 'weight_grams', 'dimensions',
+            'is_active'
         ]
         widgets = {
             'name': forms.TextInput(attrs={
@@ -39,9 +41,9 @@ class ProductForm(forms.ModelForm):
                 'min': '0',
                 'placeholder': 'Estimated print duration'
             }),
-            'material_type': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'e.g., PLA, ABS, PETG'
+            'material_type': forms.Select(attrs={
+                'class': 'form-select',
+                'aria-label': 'Select printing material'
             }),
             'difficulty_level': forms.Select(attrs={
                 'class': 'form-select',
@@ -55,6 +57,9 @@ class ProductForm(forms.ModelForm):
             'dimensions': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Format: length x width x height in mm'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
             })
         }
         help_texts = {
@@ -63,30 +68,73 @@ class ProductForm(forms.ModelForm):
             'price': 'Set your price per print, including material costs',
             'stock': 'How many times can you print this model?',
             'print_time_hours': 'Average time to complete one print',
-            'material_type': 'Recommended printing material',
+            'material_type': 'Choose the recommended material for printing this model',
             'difficulty_level': 'How challenging is it to print this model successfully?',
             'weight_grams': 'Final printed model weight',
-            'dimensions': 'Final printed model dimensions'
+            'dimensions': 'Final printed model dimensions',
+            'is_active': 'Uncheck to hide this model from your shop'
         }
-    
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
     def save(self, commit=True):
-        product = super().save(commit=commit)
+        product = super().save(commit=False)
+        if not product.pk:  # New product
+            product.seller = self.user
+            product.shop = self.user.shop
+            product.slug = slugify(product.name)
         
-        if commit and hasattr(self, 'files'):
+        if commit:
+            product.save()
             # Handle image uploads
-            for image_file in self.files.getlist('product_images'):
-                ProductImage.objects.create(
-                    product=product,
-                    image=image_file,
-                    is_primary=not product.images.exists()  # First image is primary
-                )
-            
-            # Handle image deletion
-            remove_images = self.data.getlist('remove_images')
-            if remove_images:
-                ProductImage.objects.filter(
-                    id__in=remove_images,
-                    product=product
-                ).delete()
+            if hasattr(self, 'files'):
+                for image_file in self.files.getlist('product_images'):
+                    ProductImage.objects.create(
+                        product=product,
+                        image=image_file,
+                        is_primary=not product.images.exists()
+                    )
+                
+                # Handle image deletion
+                remove_images = self.data.getlist('remove_images')
+                if remove_images:
+                    ProductImage.objects.filter(
+                        id__in=remove_images,
+                        product=product
+                    ).delete()
         
         return product
+
+
+class ShopForm(forms.ModelForm):
+    class Meta:
+        model = Shop
+        fields = ['name', 'description', 'logo', 'banner']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your shop name'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your shop and what you create'
+            }),
+            'logo': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'banner': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            })
+        }
+
+    def save(self, commit=True):
+        shop = super().save(commit=False)
+        shop.slug = slugify(shop.name)
+        if commit:
+            shop.save()
+        return shop

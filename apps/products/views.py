@@ -1,11 +1,11 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib import messages
-from .models import Category, Product, ProductImage
-from .forms import ProductForm
+from .models import Category, Product, Shop
+from .forms import ProductForm, ShopForm
 
 
 class ProductListView(ListView):
@@ -65,15 +65,25 @@ class ProductDetailView(DetailView):
         return context
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'products/product_form.html'
     success_url = reverse_lazy('products:product_list')
 
+    def test_func(self):
+        return hasattr(self.request.user, 'shop')
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'You need to create a shop before you can add products.')
+        return redirect('products:shop_create')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
-        form.instance.seller = self.request.user
-        form.instance.slug = form.instance.name.lower().replace(' ', '-')
         response = super().form_valid(form)
         messages.success(self.request, 'Your 3D model has been successfully added to the marketplace!')
         return response
@@ -103,3 +113,84 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, '3D model has been removed from the marketplace!')
         return super().delete(request, *args, **kwargs)
+
+
+class ShopListView(ListView):
+    model = Shop
+    template_name = 'products/shop_list.html'
+    context_object_name = 'shops'
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = Shop.objects.filter(is_active=True)
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return queryset.annotate(
+            product_count=Count('products'),
+            total_sales=Count('products__orderitem')
+        )
+
+
+class ShopCreateView(LoginRequiredMixin, CreateView):
+    model = Shop
+    form_class = ShopForm
+    template_name = 'products/shop_form.html'
+    
+    def form_valid(self, form):
+        if hasattr(self.request.user, 'shop'):
+            messages.error(self.request, 'You already have a shop!')
+            return redirect('products:shop_detail', slug=self.request.user.shop.slug)
+        
+        form.instance.owner = self.request.user
+        self.request.user.is_seller = True
+        self.request.user.save()
+        messages.success(self.request, 'Your shop has been created successfully!')
+        return super().form_valid(form)
+
+
+class ShopDetailView(DetailView):
+    model = Shop
+    template_name = 'products/shop_detail.html'
+    context_object_name = 'shop'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = self.object.products.filter(is_active=True)
+        return context
+
+
+class ShopUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Shop
+    form_class = ShopForm
+    template_name = 'products/shop_form.html'
+    
+    def test_func(self):
+        shop = self.get_object()
+        return self.request.user == shop.owner
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Shop details updated successfully!')
+        return super().form_valid(form)
+
+
+class ShopDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'products/shop_dashboard.html'
+    
+    def test_func(self):
+        return hasattr(self.request.user, 'shop')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        shop = self.request.user.shop
+        context['shop'] = shop
+        context['products'] = shop.products.all()
+        context['total_products'] = shop.products.count()
+        context['active_products'] = shop.products.filter(is_active=True).count()
+        context['total_orders'] = shop.products.aggregate(
+            total_orders=Count('orderitem')
+        )['total_orders']
+        return context

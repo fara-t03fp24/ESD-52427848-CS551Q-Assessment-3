@@ -5,118 +5,153 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'products/css/product_detail.css' %}">
+<link href="{% static 'products/css/shop.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <!-- Product Images -->
-    <div class="col-md-6 mb-4">
-        {% if product.images.exists %}
-            <div class="product-gallery">
-                <div class="main-image">
-                    {% with main_image=product.images.first %}
-                        <img src="{{ main_image.image.url }}" alt="{{ product.name }}" 
-                             class="img-fluid rounded" data-bs-toggle="modal" data-bs-target="#imageModal"
-                             style="cursor: pointer;">
-                    {% endwith %}
-                    {% if not product.is_active %}
-                        <div class="position-absolute top-0 end-0 m-3">
-                            <span class="badge bg-warning"><i class="fas fa-eye-slash me-1"></i>Hidden from Store</span>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                {% if product.images.exists %}
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in product.images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.name }}"
+                                         style="height: 400px; object-fit: cover;">
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% elif product.stock <= 0 %}
-                        <div class="position-absolute top-0 end-0 m-3">
-                            <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Out of Stock</span>
-                        </div>
-                    {% endif %}
-                </div>
-                {% if product.images.count > 1 %}
-                    <div class="thumbnail-grid mt-3">
-                        {% for image in product.images.all %}
-                            <img src="{{ image.image.url }}" alt="{{ product.name }}" class="thumbnail"
-                                 data-bs-toggle="modal" data-bs-target="#imageModal">
-                        {% endfor %}
+                        {% if product.images.count > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-cube fa-4x text-muted"></i>
+                        <p class="mt-3 text-muted">No images available</p>
                     </div>
                 {% endif %}
             </div>
+        </div>
+    </div>
 
-            <!-- Image Modal -->
-            <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body p-0">
-                            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" 
-                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" 
-                                 class="img-fluid">
+    <!-- Product Info -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-4">{{ product.name }}</h2>
+
+                <!-- Shop Info -->
+                <div class="shop-info mb-4">
+                    <a href="{% url 'products:shop_detail' product.shop.slug %}" class="text-decoration-none">
+                        {% if product.shop.logo %}
+                            <img src="{{ product.shop.logo.url }}" alt="{{ product.shop.name }}" class="shop-logo me-3">
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-1">{{ product.shop.name }}</h5>
+                            <p class="mb-0 text-muted">
+                                <i class="fas fa-user me-1"></i>{{ product.shop.owner.get_full_name|default:product.shop.owner.email }}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-primary mb-3">
+                        <i class="fas fa-dollar-sign"></i>{{ product.price }}
+                    </h4>
+                    
+                    {% if product.stock > 0 %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-check me-1"></i>In Stock
+                        </span>
+                        <small class="text-muted ms-2">{{ product.stock }} prints available</small>
+                    {% else %}
+                        <span class="badge bg-danger">
+                            <i class="fas fa-times me-1"></i>Out of Stock
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <h5><i class="fas fa-info-circle me-2"></i>Product Details</h5>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <i class="fas fa-clock text-primary"></i>
+                            <strong>Print Time</strong>
+                            <span>{{ product.print_time_hours }} hours</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-weight-hanging text-success"></i>
+                            <strong>Weight</strong>
+                            <span>{{ product.weight_grams }}g</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-ruler-combined text-info"></i>
+                            <strong>Dimensions</strong>
+                            <span>{{ product.dimensions }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-thermometer-half text-warning"></i>
+                            <strong>Material</strong>
+                            <span>{{ product.material_type }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-shapes text-danger"></i>
+                            <strong>Category</strong>
+                            <span>{{ product.category.name }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-star text-warning"></i>
+                            <strong>Difficulty</strong>
+                            <span class="text-capitalize">{{ product.difficulty_level }}</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endif %}
-    </div>
 
-    <!-- Product Details -->
-    <div class="col-md-6">
-        <h1 class="mb-3">{{ product.name }}</h1>
-        <p class="text-muted"><i class="fas fa-tag me-1"></i>Category: {{ product.category.name }}</p>
-        
-        <div class="mb-4">
-            <h4 class="text-primary"><i class="fas fa-dollar-sign me-1"></i>{{ product.price }}</h4>
-            <p class="mb-2">
-                <i class="fas {% if product.stock > 0 %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} me-1"></i>
-                Stock: {% if product.stock > 0 %}{{ product.stock }} available{% else %}Out of stock{% endif %}
-            </p>
-        </div>
-
-        <div class="mb-4">
-            <h5><i class="fas fa-cog me-2"></i>Technical Details</h5>
-            <ul class="list-unstyled">
-                <li><i class="fas fa-clock me-2"></i><strong>Print Time:</strong> {{ product.print_time_hours }} hours</li>
-                <li><i class="fas fa-layer-group me-2"></i><strong>Material:</strong> {{ product.material_type }}</li>
-                <li><i class="fas fa-star me-2"></i><strong>Difficulty Level:</strong> {{ product.get_difficulty_level_display }}</li>
-                <li><i class="fas fa-weight-hanging me-2"></i><strong>Weight:</strong> {{ product.weight_grams }}g</li>
-                <li><i class="fas fa-ruler-combined me-2"></i><strong>Dimensions:</strong> {{ product.dimensions }}</li>
-            </ul>
-        </div>
-
-        <div class="mb-4">
-            <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
-            <p>{{ product.description }}</p>
-        </div>
-
-        {% if product.stock > 0 %}
-            <form method="post" action="{% url 'orders:add_to_cart' product.id %}" class="mb-4">
-                {% csrf_token %}
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <label for="quantity" class="form-label">
-                            <i class="fas fa-cubes me-1"></i>Quantity:
-                        </label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
-                    </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
-                        </button>
-                    </div>
+                <div class="mb-4">
+                    <h5><i class="fas fa-align-left me-2"></i>Description</h5>
+                    <p class="card-text">{{ product.description }}</p>
                 </div>
-            </form>
-        {% else %}
-            <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle me-1"></i>This item is currently out of stock.
-            </div>
-        {% endif %}
 
-        {% if user == product.seller %}
-            <div class="mt-4">
-                <a href="{% url 'products:product_update' product.slug %}" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-edit me-1"></i>Edit Product
-                </a>
-                <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-outline-danger">
-                    <i class="fas fa-trash-alt me-1"></i>Delete Product
-                </a>
+                {% if request.user.is_authenticated %}
+                    {% if product.is_active and product.stock > 0 %}
+                        <form method="post" action="{% url 'orders:add_to_cart' product.slug %}">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-cart-plus me-2"></i>Add to Print Queue
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Please <a href="{% url 'users:login' %}?next={{ request.path }}">log in</a> to add this model to your print queue.
+                    </div>
+                {% endif %}
+
+                {% if request.user == product.seller %}
+                    <div class="mt-3">
+                        <a href="{% url 'products:product_update' product.slug %}" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                        <a href="{% url 'products:product_delete' product.slug %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
