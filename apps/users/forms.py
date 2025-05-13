@@ -4,9 +4,15 @@ from .models import User
 
 
 class UserRegistrationForm(UserCreationForm):
+    is_seller = forms.BooleanField(
+        required=False,
+        label='Register as a Seller',
+        help_text='Check this if you want to sell 3D models in your own shop.'
+    )
+
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'is_seller']
         help_texts = {
             'email': 'We\'ll use this to notify you about your 3D printing orders',
             'first_name': 'Your first name will be shown on your 3D model listings',
@@ -37,6 +43,9 @@ class UserRegistrationForm(UserCreationForm):
         })
         self.fields['password1'].help_text = 'Create a strong password to protect your 3D printing marketplace account'
         self.fields['password2'].help_text = 'Enter the same password as above, for verification'
+        self.fields['is_seller'].widget.attrs.update({
+            'class': 'form-check-input'
+        })
 
 
 class UserUpdateForm(forms.ModelForm):

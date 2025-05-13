@@ -12,6 +12,7 @@ class User(AbstractUser, BaseModel):
     full_name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
     email = models.EmailField(unique=True)
+    is_seller = models.BooleanField(default=False, help_text="Designates whether this user can sell models")
     username = None  # Disable username field
 
     groups = models.ManyToManyField(
