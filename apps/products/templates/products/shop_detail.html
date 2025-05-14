@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ shop.name }} - PrintCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Shop Header -->
+    <div class="card mb-4">
+        {% if shop.banner %}
+            <img src="{{ shop.banner.url }}" class="card-img-top" alt="{{ shop.name }} Banner" style="height: 200px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    {% if shop.logo %}
+                        <img src="{{ shop.logo.url }}" alt="{{ shop.name }} Logo" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; margin: 0 auto;">
+                            <i class="fas fa-store fa-3x"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-7">
+                    <h1 class="card-title mb-2">{{ shop.name }}</h1>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-user me-2"></i>{{ shop.owner.get_full_name|default:shop.owner.email }}
+                    </p>
+                    <p class="card-text">{{ shop.description }}</p>
+                </div>
+                <div class="col-md-3 text-end">
+                    {% if request.user == shop.owner %}
+                        <a href="{% url 'products:shop_update' shop.slug %}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Shop
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Products -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-cubes me-2"></i>Available 3D Models
+        </h2>
+        {% if request.user == shop.owner and products %}
+            <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Model
+            </a>
+        {% endif %}
+    </div>
+
+    {% if products %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if product.images.exists %}
+                            <img src="{{ product.images.first.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-cube fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-muted">{{ product.description|truncatewords:20 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0"><i class="fas fa-dollar-sign me-1"></i>{{ product.price }}</span>
+                                <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-info-circle me-1"></i>Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-cube fa-3x text-muted mb-3"></i>
+            <p class="lead">No 3D models available yet.</p>
+            {% if request.user == shop.owner %}
+                <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Your First Model
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

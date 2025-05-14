@@ -3,11 +3,15 @@
 
 {% block title %}Join PrintCraft - Create Your Account{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/auth.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
+            <div class="registration-card">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <h2 class="mb-3">Create Your PrintCraft Account</h2>
@@ -31,9 +35,6 @@
                                 {% if form.first_name.errors %}
                                     <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
                                 {% endif %}
-                                {% if form.first_name.help_text %}
-                                    <small class="form-text text-muted">{{ form.first_name.help_text }}</small>
-                                {% endif %}
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -43,9 +44,6 @@
                                 {{ form.last_name }}
                                 {% if form.last_name.errors %}
                                     <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
-                                {% endif %}
-                                {% if form.last_name.help_text %}
-                                    <small class="form-text text-muted">{{ form.last_name.help_text }}</small>
                                 {% endif %}
                             </div>
                         </div>
@@ -58,9 +56,6 @@
                             {% if form.email.errors %}
                                 <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
                             {% endif %}
-                            {% if form.email.help_text %}
-                                <small class="form-text text-muted">{{ form.email.help_text }}</small>
-                            {% endif %}
                         </div>
 
                         <div class="row">
@@ -72,9 +67,6 @@
                                 {% if form.password1.errors %}
                                     <div class="invalid-feedback d-block">{{ form.password1.errors }}</div>
                                 {% endif %}
-                                {% if form.password1.help_text %}
-                                    <small class="form-text text-muted">{{ form.password1.help_text }}</small>
-                                {% endif %}
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -84,9 +76,6 @@
                                 {{ form.password2 }}
                                 {% if form.password2.errors %}
                                     <div class="invalid-feedback d-block">{{ form.password2.errors }}</div>
-                                {% endif %}
-                                {% if form.password2.help_text %}
-                                    <small class="form-text text-muted">{{ form.password2.help_text }}</small>
                                 {% endif %}
                             </div>
                         </div>
@@ -98,9 +87,6 @@
                                     <i class="fas fa-store me-2"></i>Register as a Seller
                                 </label>
                             </div>
-                            {% if form.is_seller.help_text %}
-                                <small class="form-text text-muted">{{ form.is_seller.help_text }}</small>
-                            {% endif %}
                         </div>
 
                         <div class="d-grid gap-2">
@@ -116,31 +102,33 @@
                 </div>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title text-center mb-4">
-                        <i class="fas fa-shield-alt me-2"></i>Benefits of Joining PrintCraft
-                    </h5>
-                    <div class="row text-center">
-                        <div class="col-md-4 mb-3">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-shopping-cart fa-2x mb-3 text-primary"></i>
-                                <h6>Easy Ordering</h6>
-                                <p class="small text-muted mb-0">Order physical 3D prints with just a few clicks</p>
+            <div class="benefits-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-4">
+                            <i class="fas fa-shield-alt me-2"></i>Benefits of Joining PrintCraft
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="benefit-item">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <h6>Easy Ordering</h6>
+                                    <p class="small text-muted mb-0">Order physical 3D prints with just a few clicks</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-store fa-2x mb-3 text-primary"></i>
-                                <h6>Seller Benefits</h6>
-                                <p class="small text-muted mb-0">Open your shop and sell your 3D prints</p>
+                            <div class="col-md-4">
+                                <div class="benefit-item">
+                                    <i class="fas fa-store"></i>
+                                    <h6>Seller Benefits</h6>
+                                    <p class="small text-muted mb-0">Open your shop and sell your 3D prints</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-history fa-2x mb-3 text-primary"></i>
-                                <h6>Order History</h6>
-                                <p class="small text-muted mb-0">Track all your prints and orders</p>
+                            <div class="col-md-4">
+                                <div class="benefit-item">
+                                    <i class="fas fa-history"></i>
+                                    <h6>Order History</h6>
+                                    <p class="small text-muted mb-0">Track all your prints and orders</p>
+                                </div>
                             </div>
                         </div>
                     </div>

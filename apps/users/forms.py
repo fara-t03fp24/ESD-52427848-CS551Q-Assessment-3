@@ -1,6 +1,28 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import User
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your email address',
+            'autocomplete': 'email'
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your password',
+            'autocomplete': 'current-password'
+        })
+    )
+
+    error_messages = {
+        'invalid_login': 'Please enter a correct email and password. Note that both fields may be case-sensitive.',
+        'inactive': 'This account is inactive. Please contact support if you think this is a mistake.',
+    }
 
 
 class UserRegistrationForm(UserCreationForm):

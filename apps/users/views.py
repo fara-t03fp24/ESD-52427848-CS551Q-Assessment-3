@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
 import logging
 import os
-from .forms import UserRegistrationForm, UserUpdateForm
+from .forms import UserRegistrationForm, UserUpdateForm, CustomAuthenticationForm
 
 logger = logging.getLogger(__name__)
 
@@ -32,15 +32,24 @@ def register(request):
 
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            messages.success(request, 'Welcome back to the 3D printing marketplace!')
-            next_url = request.GET.get('next', 'products:product_list')
-            return redirect(next_url)
+            messages.success(request, f'Welcome back, {user.get_full_name() or user.email}!')
+            
+            # Redirect to the page user was trying to access, or to products list
+            next_url = request.GET.get('next')
+            if next_url and next_url.startswith('/'):  # Only redirect to internal URLs
+                return redirect(next_url)
+            return redirect('products:product_list')
     else:
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
+        
+        # If user was redirected to login, show a message
+        if request.GET.get('next'):
+            messages.info(request, 'Please log in to access that page.')
+    
     return render(request, 'users/login.html', {'form': form})
 
 

@@ -3,22 +3,40 @@
 
 {% block title %}Login - PrintCraft{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/auth.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow-sm">
+            <div class="login-card">
                 <div class="card-body p-5">
-                    <div class="text-center mb-4">
+                    <div class="login-header">
+                        <div class="icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
                         <h2 class="mb-3">Welcome Back!</h2>
                         <p class="text-muted">Sign in to access your 3D printing account</p>
                     </div>
 
-                    <form method="post" novalidate>
+                    {% if request.GET.next %}
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>Please log in to continue
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate class="login-form">
                         {% csrf_token %}
-                        {% if form.errors %}
+                        {% if form.non_field_errors %}
                             <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle me-2"></i>Please check your credentials and try again.
+                                {% for error in form.non_field_errors %}
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
                             </div>
                         {% endif %}
 
@@ -28,7 +46,13 @@
                             </label>
                             {{ form.username }}
                             {% if form.username.errors %}
-                                <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.username.errors %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             {% endif %}
                         </div>
 
@@ -38,39 +62,49 @@
                             </label>
                             {{ form.password }}
                             {% if form.password.errors %}
-                                <div class="invalid-feedback d-block">{{ form.password.errors }}</div>
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password.errors %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             {% endif %}
                         </div>
 
-                        <div class="d-grid gap-2">
+                        <div class="d-grid gap-3">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-sign-in-alt me-2"></i>Sign In
                             </button>
+                            <div class="text-center">
+                                <a href="{% url 'users:register' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Create New Account
+                                </a>
+                            </div>
                         </div>
                     </form>
-
-                    <div class="text-center mt-4">
-                        <p>New to PrintCraft? <a href="{% url 'users:register' %}">Create an account</a></p>
-                    </div>
                 </div>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><i class="fas fa-user-shield me-2"></i>Why Join PrintCraft?</h5>
-                    <div class="row mt-4">
-                        <div class="col-md-4">
-                            <i class="fas fa-print fa-2x mb-3 text-primary"></i>
-                            <p class="mb-0">Order 3D Prints</p>
-                        </div>
-                        <div class="col-md-4">
-                            <i class="fas fa-store fa-2x mb-3 text-primary"></i>
-                            <p class="mb-0">Open Your Shop</p>
-                        </div>
-                        <div class="col-md-4">
-                            <i class="fas fa-box-open fa-2x mb-3 text-primary"></i>
-                            <p class="mb-0">Track Orders</p>
-                        </div>
+            <div class="benefits-card">
+                <h5 class="benefits-title text-center">
+                    <i class="fas fa-shield-alt me-2"></i>PrintCraft Account Benefits
+                </h5>
+                <div class="benefits-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                        <h6>Easy Ordering</h6>
+                        <p class="small text-muted mb-0">Order 3D prints with secure checkout</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-store fa-2x mb-3"></i>
+                        <h6>Seller Tools</h6>
+                        <p class="small text-muted mb-0">Open your shop & manage orders</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-history fa-2x mb-3"></i>
+                        <h6>Order History</h6>
+                        <p class="small text-muted mb-0">Track all your prints & orders</p>
                     </div>
                 </div>
             </div>
