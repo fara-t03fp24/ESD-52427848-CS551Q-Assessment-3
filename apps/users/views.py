@@ -4,7 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.core.files.storage import default_storage
+import logging
+import os
 from .forms import UserRegistrationForm, UserUpdateForm
+
+logger = logging.getLogger(__name__)
 
 
 def register(request):
@@ -48,11 +53,43 @@ def logout_view(request):
 @login_required
 def profile_update(request):
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, instance=request.user)
+        logger.info(f"FILES: {request.FILES}")
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
+            if 'avatar' in request.FILES:
+                avatar_file = request.FILES['avatar']
+                logger.info(f"Processing avatar file: {avatar_file.name}")
+                
+                # Delete old avatar if it exists
+                if request.user.avatar:
+                    try:
+                        old_path = request.user.avatar.path
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                            logger.info(f"Deleted old avatar: {old_path}")
+                    except Exception as e:
+                        logger.error(f"Error deleting old avatar: {e}")
+
+                # Save new avatar
+                try:
+                    file_name = f"users/avatars/{request.user.id}_{avatar_file.name}"
+                    file_path = default_storage.save(file_name, avatar_file)
+                    logger.info(f"Saved new avatar to: {file_path}")
+                    
+                    # Update user model
+                    request.user.avatar = file_path
+                    request.user.save()
+                except Exception as e:
+                    logger.error(f"Error saving new avatar: {e}")
+                    messages.error(request, "There was an error uploading your profile picture. Please try again.")
+                    return redirect('users:profile')
+
             form.save()
             messages.success(request, 'Your 3D printing marketplace profile has been updated!')
             return redirect('users:profile')
+        else:
+            logger.error(f"Form errors: {form.errors}")
+            messages.error(request, "Please correct the errors below.")
     else:
         form = UserUpdateForm(instance=request.user)
     return render(request, 'users/profile.html', {'form': form})

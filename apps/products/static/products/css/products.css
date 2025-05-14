@@ -1,0 +1,125 @@
+/* Product List Page */
+.filter-sidebar {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.product-card {
+    border: none;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+.product-image {
+    height: 200px;
+    object-fit: cover;
+    background: #f8f9fa;
+}
+
+.product-image.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dee2e6;
+}
+
+/* Difficulty Level Badges */
+.badge.bg-easy-subtle {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.badge.bg-medium-subtle {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+.badge.bg-hard-subtle {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Sort & Filter Controls */
+.form-select, .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* Pagination */
+.pagination .page-link {
+    border: none;
+    padding: 0.75rem 1rem;
+    color: #495057;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-link:hover {
+    background: #e9ecef;
+    color: #212529;
+}
+
+.pagination .page-link:focus {
+    box-shadow: none;
+}
+
+.pagination .page-item.active .page-link {
+    background: #0d6efd;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    background: transparent;
+    color: #6c757d;
+}
+
+/* Product Details */
+.product-details {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 2rem;
+}
+
+.product-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.product-meta i {
+    color: #0d6efd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .filter-sidebar {
+        position: static !important;
+        margin-bottom: 1.5rem;
+    }
+
+    .product-image {
+        height: 150px;
+    }
+    
+    .product-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}

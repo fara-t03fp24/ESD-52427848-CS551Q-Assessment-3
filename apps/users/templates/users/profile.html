@@ -1,82 +1,172 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Profile Settings - PrintCraft{% endblock %}
+{% block title %}My Profile - PrintCraft{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Profile Settings</h4>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" 
+                                 class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        {% endif %}
+                    </div>
+                    <h4>{{ user.get_full_name }}</h4>
+                    <p class="text-muted mb-2">{{ user.email }}</p>
+                    {% if user.is_seller %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-store me-1"></i>Seller Account
+                        </span>
+                    {% else %}
+                        <span class="badge bg-info">
+                            <i class="fas fa-user me-1"></i>Collector Account
+                        </span>
+                    {% endif %}
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-cog me-2"></i>Quick Actions
+                    </h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-box me-2"></i>My Orders
+                        </a>
+                        {% if user.is_seller %}
+                            {% if user.shop %}
+                                <a href="{% url 'products:shop_dashboard' user.shop.slug %}" class="btn btn-outline-success">
+                                    <i class="fas fa-store me-2"></i>My Shop Dashboard
+                                </a>
+                            {% else %}
+                                <a href="{% url 'products:shop_create' %}" class="btn btn-success">
+                                    <i class="fas fa-store me-2"></i>Create My Shop
+                                </a>
                             {% endif %}
-                            {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Save Changes
-                    </button>
-                </form>
+                        {% else %}
+                            <form method="post" action="{% url 'users:become_seller' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-store me-2"></i>Become a Seller
+                                </button>
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'users:password_change' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Seller Registration -->
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0"><i class="fas fa-store me-2"></i>Seller Account</h4>
-            </div>
-            <div class="card-body">
-                {% if user.is_seller %}
-                    {% if user.shop %}
-                        <div class="text-center">
-                            <i class="fas fa-store-alt fa-3x text-success mb-3"></i>
-                            <h5>You have a shop!</h5>
-                            <p class="text-muted">Manage your 3D models and track your sales in your shop dashboard.</p>
-                            <a href="{% url 'products:shop_dashboard' user.shop.slug %}" class="btn btn-primary">
-                                <i class="fas fa-chart-line me-1"></i>Go to Shop Dashboard
-                            </a>
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-user-edit me-2"></i>Update Profile
+                    </h4>
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>Please correct the errors below.
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>First Name
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Last Name
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="text-center">
-                            <i class="fas fa-store fa-3x text-primary mb-3"></i>
-                            <h5>Set Up Your Shop</h5>
-                            <p class="text-muted">You're registered as a seller. Create your shop to start selling your 3D models!</p>
-                            <a href="{% url 'products:shop_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus-circle me-1"></i>Create Your Shop
-                            </a>
+
+                        <div class="mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+                            {% endif %}
+                            {% if form.email.help_text %}
+                                <small class="form-text text-muted">{{ form.email.help_text }}</small>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                {% else %}
-                    <div class="text-center">
-                        <i class="fas fa-store fa-3x text-muted mb-3"></i>
-                        <h5>Become a Seller</h5>
-                        <p class="text-muted">Start selling your 3D models on PrintCraft!</p>
-                        <form method="post" action="{% url 'users:become_seller' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-store-alt me-1"></i>Register as Seller
+
+                        <div class="mb-4">
+                            <label for="{{ form.avatar.id_for_label }}" class="form-label">
+                                <i class="fas fa-image me-2"></i>Profile Picture
+                            </label>
+                            {{ form.avatar }}
+                            {% if form.avatar.errors %}
+                                <div class="invalid-feedback d-block">{{ form.avatar.errors }}</div>
+                            {% endif %}
+                            {% if form.avatar.help_text %}
+                                <small class="form-text text-muted">{{ form.avatar.help_text }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
                             </button>
-                        </form>
-                    </div>
-                {% endif %}
+                        </div>
+                    </form>
+                </div>
             </div>
+
+            {% if user.is_seller and user.shop %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-chart-bar me-2"></i>Shop Statistics
+                    </h4>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <h3 class="text-primary mb-2">{{ user.shop.products.count }}</h3>
+                                <p class="text-muted mb-0">Active Models</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <h3 class="text-success mb-2">{{ user.orders.count }}</h3>
+                                <p class="text-muted mb-0">Total Orders</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <h3 class="text-info mb-2">{{ user.created_at|date:"M Y" }}</h3>
+                                <p class="text-muted mb-0">Member Since</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

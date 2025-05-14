@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
@@ -15,7 +15,7 @@ class ProductListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Product.objects.select_related('category', 'seller').prefetch_related('images')
+        queryset = Product.objects.select_related('category', 'seller', 'shop').prefetch_related('images')
         q = self.request.GET.get('q')
         category = self.request.GET.get('category')
         sort = self.request.GET.get('sort')
@@ -46,6 +46,14 @@ class ProductListView(ListView):
         context['current_category'] = self.request.GET.get('category')
         context['current_sort'] = self.request.GET.get('sort')
         context['query'] = self.request.GET.get('q')
+        
+        # Add current category object to context
+        if context['current_category']:
+            context['current_category_obj'] = get_object_or_404(
+                Category, 
+                slug=context['current_category']
+            )
+            
         return context
 
 

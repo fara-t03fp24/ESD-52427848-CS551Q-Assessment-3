@@ -1,0 +1,197 @@
+/* User Profile Styles */
+.profile-header {
+    position: relative;
+    background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.profile-header .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header .avatar i {
+    font-size: 4rem;
+    color: #3182ce;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-label {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+/* Auth Forms Styling */
+.auth-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.auth-form {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form .form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.auth-form .form-control:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.auth-form .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+.password-strength-meter {
+    height: 4px;
+    background: #edf2f7;
+    margin-top: 0.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.password-strength-meter div {
+    height: 100%;
+    width: 0;
+    transition: all 0.3s ease;
+}
+
+.strength-weak {
+    background: #f56565;
+    width: 33.33%;
+}
+
+.strength-medium {
+    background: #ecc94b;
+    width: 66.66%;
+}
+
+.strength-strong {
+    background: #48bb78;
+    width: 100%;
+}
+
+.social-login-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.social-login-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.social-login-divider span {
+    position: relative;
+    background: white;
+    padding: 0 1rem;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+/* Seller Profile Additional Styles */
+.seller-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.seller-stat-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.seller-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.seller-stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    background: #ebf8ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.seller-stat-card .stat-icon i {
+    color: #3182ce;
+    font-size: 1.25rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .seller-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-header {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .profile-header .avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-header .avatar i {
+        font-size: 2.5rem;
+    }
+}

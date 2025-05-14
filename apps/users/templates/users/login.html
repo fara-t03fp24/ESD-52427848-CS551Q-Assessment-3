@@ -1,63 +1,78 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Login - PrintCraft{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </h2>
-                
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Invalid email or password.
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="mb-3">Welcome Back!</h2>
+                        <p class="text-muted">Sign in to access your 3D printing account</p>
                     </div>
-                {% endif %}
 
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">
-                            <i class="fas fa-envelope me-2"></i>Email Address
-                        </label>
-                        <input type="email" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
-                               id="{{ form.username.id_for_label }}" required autofocus>
-                        {% if form.username.errors %}
-                            <div class="invalid-feedback">
-                                {{ form.username.errors|join:", " }}
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>Please check your credentials and try again.
                             </div>
                         {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="form-label">
-                            <i class="fas fa-lock me-2"></i>Password
-                        </label>
-                        <input type="password" name="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
-                               id="{{ form.password.id_for_label }}" required>
-                        {% if form.password.errors %}
-                            <div class="invalid-feedback">
-                                {{ form.password.errors|join:", " }}
-                            </div>
-                        {% endif %}
-                    </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </button>
-                        <a href="{% url 'users:register' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-user-plus me-2"></i>Create New Account
-                        </a>
-                    </div>
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
 
-                    {% if next %}
-                        <input type="hidden" name="next" value="{{ next }}">
-                    {% endif %}
-                </form>
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p>New to PrintCraft? <a href="{% url 'users:register' %}">Create an account</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fas fa-user-shield me-2"></i>Why Join PrintCraft?</h5>
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <i class="fas fa-print fa-2x mb-3 text-primary"></i>
+                            <p class="mb-0">Order 3D Prints</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-store fa-2x mb-3 text-primary"></i>
+                            <p class="mb-0">Open Your Shop</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-box-open fa-2x mb-3 text-primary"></i>
+                            <p class="mb-0">Track Orders</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
