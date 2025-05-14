@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrintCraft - 3D Model Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <style>
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo img {
+      width: 48px;
+      height: 48px;
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="{{ MEDIA_URL }}icon.png" alt="PrintCraft Logo">
+      <div class="brand-text">
+        <h2>PrintCraft</h2>
+        <small class="brand-subtitle">3D • Buy & Sell</small>
+      </div>
+    </div>
+    <nav>
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'products:product_list' %}">Marketplace</a>
+      <a href="{% url 'users:register' %}">Register</a>
+      <a href="{% url 'users:login' %}">Login</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Empower Your Imagination</h1>
+    <p>Buy, sell, and discover high-quality 3D printable models created by passionate designers worldwide.</p>
+    <a href="{% url 'products:product_list' %}" class="hero button">Explore Marketplace</a>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <h3>For Creators</h3>
+      <p>Upload, showcase, and monetize your 3D designs easily. Retain control of your work.</p>
+    </div>
+    <div class="feature-card">
+      <h3>For Clients</h3>
+      <p>Browse an ever-growing library of unique models ready for 3D printing. Find what you need fast.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Secure Platform</h3>
+      <p>Safe transactions, trusted creators, and quality-checked models give you peace of mind.</p>
+    </div>
+  </section>
+
+  <section class="action-section">
+    <div class="tabs">
+      <a href="{% url 'users:register' %}?type=creator" class="tab active">👨‍🎨 Creator</a>
+      <a href="{% url 'users:register' %}?type=client" class="tab">🛍️ Client</a>
+      <a href="{% url 'users:login' %}" class="tab">🔐 Login</a>
+    </div>
+    <div class="tab-content">
+      {% if request.GET.type == 'client' %}
+        <h3>Register as a Client</h3>
+        <p>Find the perfect 3D models for your next print. Easy, secure, and fast.</p>
+        <a href="{% url 'users:register' %}?type=client" class="button">Register</a>
+      {% elif request.GET.type == 'login' %}
+        <h3>Already Have an Account?</h3>
+        <p>Login to manage your dashboard, sales, or saved models.</p>
+        <a href="{% url 'users:login' %}" class="button">Login</a>
+      {% else %}
+        <h3>Register as a Creator</h3>
+        <p>Join our global designer community. Start selling your 3D models now.</p>
+        <a href="{% url 'users:register' %}?type=creator" class="button">Register</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <footer>
+    &copy; {% now "Y" %} PrintCraft. All rights reserved.
+  </footer>
+</body>
+</html>

@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView
+from django.views.generic import TemplateView
 
 # Authentication URL patterns
 auth_patterns = [
@@ -18,7 +18,7 @@ auth_patterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url='products/', permanent=False)),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('products/', include('apps.products.urls')),
     path('orders/', include('apps.orders.urls')),
     path('users/', include('apps.users.urls')),

@@ -17,13 +17,13 @@
 }
 
 .shop-info {
+    display: flex;
+    align-items: center;
     position: relative;
     margin-top: -50px;
     margin-left: 20px;
     margin-right: 20px;
     border-radius: 8px;
-    display: flex;
-    align-items: center;
     padding: 8px;
     background-color: #f8f9fa;
     border-radius: 4px;
@@ -72,8 +72,8 @@
 }
 
 .shop-logo {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -108,7 +108,7 @@
 }
 
 .product-card .card-img-top {
-    height: 240px;
+    height: 200px;
     object-fit: cover;
     transition: transform 0.5s ease;
 }
@@ -140,15 +140,16 @@
 .specs-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 10px;
+    text-align: center;
     margin: 1rem 0;
 }
 
 .spec-item {
-    background: var(--light-color);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    text-align: center;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 0.9rem;
     transition: all 0.2s ease;
 }
 
@@ -157,8 +158,9 @@
 }
 
 .spec-item i {
+    display: block;
+    margin-bottom: 4px;
     font-size: 1.25rem;
-    margin-bottom: 0.25rem;
     color: var(--primary-color);
 }
 

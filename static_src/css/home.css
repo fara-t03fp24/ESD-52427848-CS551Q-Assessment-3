@@ -1,0 +1,178 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  background: linear-gradient(90deg, #ffffff, #f4f4f4);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo img {
+  width: 48px;
+  height: 48px;
+}
+
+nav a {
+  color: #333;
+  text-decoration: none;
+  margin-left: 24px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #f59e0b;
+}
+
+.hero {
+  padding: 80px 40px;
+  text-align: center;
+  background: url('https://www.svgrepo.com/show/353853/abstract-shape.svg') no-repeat center/cover;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.hero button {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.hero button:hover {
+  background: linear-gradient(to right, #f59e0b, #fbbf24);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 32px;
+  padding: 60px 40px;
+  background: #ffffff;
+}
+
+.feature-card {
+  background: #f9f9f9;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+}
+
+.feature-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #666;
+}
+
+.action-section {
+  padding: 60px 40px;
+  background: linear-gradient(145deg, #f2f2f2, #ffffff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.tabs {
+  display: flex;
+  background: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.tab {
+  padding: 14px 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.tab:hover, .tab.active {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.tab-content {
+  max-width: 500px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content h3 {
+  color: #f59e0b;
+  margin-bottom: 12px;
+}
+
+.tab-content p {
+  color: #444;
+  margin-bottom: 24px;
+}
+
+.tab-content button {
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.tab-content button:hover {
+  background: linear-gradient(to right, #f59e0b, #fbbf24);
+}
+
+footer {
+  background: #f4f4f4;
+  padding: 24px 40px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
