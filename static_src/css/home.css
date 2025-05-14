@@ -93,6 +93,55 @@ nav a:hover {
   background-clip: text;
   text-fill-color: transparent;
   animation: textGradient 8s infinite;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.welcome-banner h2 .gradient-text {
+  background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  z-index: 1;
+  position: relative;
+}
+
+.welcome-banner h2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: #f5f9ff;
+  animation: typewriter 3s steps(40, end) forwards;
+  z-index: 2;
+}
+
+@keyframes typewriter {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.welcome-banner h2 span.cursor {
+  position: absolute;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: #3182ce;
+  animation: blink 0.8s steps(2) infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .welcome-banner p {
@@ -111,6 +160,8 @@ nav a:hover {
   margin-left: 0.5rem;
   animation: wave 2.5s infinite;
   transform-origin: 70% 70%;
+  -webkit-text-fill-color: initial;
+  background: none;
 }
 
 @keyframes textGradient {
