@@ -19,10 +19,6 @@ class User(AbstractUser, BaseModel):
         verbose_name='Profile Picture',
         help_text='Upload a profile picture (optional)'
     )
-    is_seller = models.BooleanField(
-        default=False, 
-        help_text="Designates whether this user can sell 3D print models"
-    )
     last_activity = models.DateTimeField(default=timezone.now)
     username = None  # Disable username field
 
@@ -75,6 +71,13 @@ class User(AbstractUser, BaseModel):
     @property
     def has_shop(self):
         """
-        Check if seller has created their shop
+        Check if user has created their shop
         """
-        return hasattr(self, 'shop') if self.is_seller else False
+        return hasattr(self, 'shop')
+
+    @property
+    def is_seller(self):
+        """
+        A user is considered a seller only if they have a shop
+        """
+        return self.has_shop

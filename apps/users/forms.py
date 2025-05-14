@@ -26,29 +26,13 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 
 class UserRegistrationForm(UserCreationForm):
-    is_seller = forms.BooleanField(
-        required=False,
-        label='Register as a Seller',
-        help_text='Check this if you want to sell 3D models in your own shop.',
-        widget=forms.CheckboxInput(attrs={
-            'class': 'form-check-input',
-            'id': 'seller-checkbox'
-        })
-    )
-
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'is_seller']
-        help_texts = {
-            'email': 'We\'ll use this to notify you about your 3D printing orders',
-            'first_name': 'Your first name will be shown on your 3D model listings',
-            'last_name': 'Your last name will be shown on your 3D model listings'
-        }
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your email address',
-                'autocomplete': 'email'
+                'placeholder': 'Enter your email'
             }),
             'first_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -62,18 +46,14 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Style password fields
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Choose a secure password'
+            'placeholder': 'Enter your password'
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Confirm your password'
         })
-        # Custom help texts
-        self.fields['password1'].help_text = 'Create a strong password with at least 8 characters'
-        self.fields['password2'].help_text = 'Enter the same password as above, for verification'
 
 
 class UserUpdateForm(forms.ModelForm):

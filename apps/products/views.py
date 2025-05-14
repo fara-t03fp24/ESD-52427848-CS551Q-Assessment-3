@@ -154,9 +154,7 @@ class ShopCreateView(LoginRequiredMixin, CreateView):
             return redirect('products:shop_detail', slug=self.request.user.shop.slug)
         
         form.instance.owner = self.request.user
-        self.request.user.is_seller = True
-        self.request.user.save()
-        messages.success(self.request, 'Your shop has been created successfully!')
+        messages.success(self.request, 'Your shop has been created successfully! You are now a seller.')
         return super().form_valid(form)
 
 

@@ -16,14 +16,9 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_seller = form.cleaned_data.get('is_seller', False)
-            user.save()
+            user = form.save()
             auth_login(request, user)
             messages.success(request, 'Welcome to our 3D printing marketplace! Your account has been created successfully.')
-            if user.is_seller:
-                messages.info(request, 'Since you registered as a seller, you can now create your shop!')
-                return redirect('products:shop_create')
             return redirect('products:product_list')
     else:
         form = UserRegistrationForm()
@@ -121,10 +116,5 @@ def password_change(request):
 @login_required
 @require_POST
 def become_seller(request):
-    user = request.user
-    if not user.is_seller:
-        user.is_seller = True
-        user.save()
-        messages.success(request, 'You are now registered as a seller! Create your shop to start selling.')
-        return redirect('products:shop_create')
-    return redirect('users:profile')
+    messages.info(request, 'To become a seller, you need to create your shop first!')
+    return redirect('products:shop_create')
