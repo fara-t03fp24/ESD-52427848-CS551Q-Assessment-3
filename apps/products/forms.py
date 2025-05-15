@@ -4,10 +4,19 @@ from django.utils.text import slugify
 
 
 class ProductForm(forms.ModelForm):
+    shop = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'aria-label': 'Select shop'
+        }),
+        help_text='Choose which shop this model belongs to'
+    )
+
     class Meta:
         model = Product
         fields = [
-            'name', 'category', 'description', 'price', 
+            'shop', 'name', 'category', 'description', 'price', 
             'stock', 'print_time_hours', 'material_type',
             'difficulty_level', 'weight_grams', 'dimensions',
             'is_active'
@@ -60,6 +69,10 @@ class ProductForm(forms.ModelForm):
             }),
             'is_active': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
+            }),
+            'shop': forms.Select(attrs={
+                'class': 'form-select',
+                'aria-label': 'Select shop'
             })
         }
         help_texts = {
@@ -72,18 +85,20 @@ class ProductForm(forms.ModelForm):
             'difficulty_level': 'How challenging is it to print this model successfully?',
             'weight_grams': 'Final printed model weight',
             'dimensions': 'Final printed model dimensions',
-            'is_active': 'Uncheck to hide this model from your shop'
+            'is_active': 'Uncheck to hide this model from your shop',
+            'shop': 'Choose which shop this model belongs to'
         }
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        if user:
+            self.fields['shop'].queryset = user.shops.all()
 
     def save(self, commit=True):
         product = super().save(commit=False)
         if not product.pk:  # New product
             product.seller = self.user
-            product.shop = self.user.shop
             product.slug = slugify(product.name)
         
         if commit:
@@ -115,7 +130,8 @@ class ShopForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your shop name'
+                'placeholder': 'Enter your shop name (lowercase, no spaces)',
+                'pattern': '[a-z0-9-_]+',
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -131,6 +147,18 @@ class ShopForm(forms.ModelForm):
                 'accept': 'image/*'
             })
         }
+        help_texts = {
+            'name': 'Shop name can only contain lowercase letters, numbers, hyphens and underscores',
+            'description': 'Tell customers about your shop and what kind of 3D models you create',
+        }
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name', '').lower()
+        if ' ' in name:
+            raise forms.ValidationError('Shop name cannot contain spaces. Use hyphens or underscores instead.')
+        if not name.isascii():
+            raise forms.ValidationError('Shop name can only contain ASCII characters.')
+        return name
 
     def save(self, commit=True):
         shop = super().save(commit=False)

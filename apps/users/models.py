@@ -71,13 +71,13 @@ class User(AbstractUser, BaseModel):
     @property
     def has_shop(self):
         """
-        Check if user has created their shop
+        Check if user has any shops
         """
-        return hasattr(self, 'shop')
+        return self.shops.exists()
 
     @property
     def is_seller(self):
         """
-        A user is considered a seller only if they have a shop
+        A user is considered a seller only if they have at least one shop
         """
         return self.has_shop

@@ -69,13 +69,16 @@
 }
 
 .navbar {
-    background: rgba(255, 255, 255, 0.95) !important;
-    padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: fixed;
-    width: 100%;
     top: 0;
-    z-index: 1000;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 70px; /* Fixed height for consistency */
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -112,6 +115,14 @@
     color: #4299e1;
 }
 
+.dropdown-menu {
+    margin-top: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1020;
+}
+
 .navbar-toggler {
     border: none;
     padding: 0.5rem;
@@ -125,7 +136,7 @@
 
 /* Add margin to body to account for fixed navbar */
 body {
-    padding-top: 80px;
+    padding-top: 70px; /* Match navbar height */
 }
 
 /* Notification Messages */

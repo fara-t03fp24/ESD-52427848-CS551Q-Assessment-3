@@ -2,10 +2,14 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from django.contrib import messages
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models.functions import TruncMonth
 from .models import Category, Product, Shop
+from apps.orders.models import OrderItem
 from .forms import ProductForm, ShopForm
+import datetime
 
 
 class ProductListView(ListView):
@@ -149,12 +153,12 @@ class ShopCreateView(LoginRequiredMixin, CreateView):
     template_name = 'products/shop_form.html'
     
     def form_valid(self, form):
-        if hasattr(self.request.user, 'shop'):
-            messages.error(self.request, 'You already have a shop!')
-            return redirect('products:shop_detail', slug=self.request.user.shop.slug)
-        
         form.instance.owner = self.request.user
-        messages.success(self.request, 'Your shop has been created successfully! You are now a seller.')
+        # Set user as seller when they create their first shop
+        if not self.request.user.is_seller:
+            self.request.user.is_seller = True
+            self.request.user.save()
+        messages.success(self.request, 'Your shop has been created successfully!')
         return super().form_valid(form)
 
 
@@ -187,16 +191,64 @@ class ShopDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'products/shop_dashboard.html'
     
     def test_func(self):
-        return hasattr(self.request.user, 'shop')
+        shop = get_object_or_404(Shop, slug=self.kwargs['slug'])
+        return self.request.user == shop.owner
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        shop = self.request.user.shop
-        context['shop'] = shop
-        context['products'] = shop.products.all()
-        context['total_products'] = shop.products.count()
-        context['active_products'] = shop.products.filter(is_active=True).count()
-        context['total_orders'] = shop.products.aggregate(
-            total_orders=Count('orderitem')
-        )['total_orders']
+        shop = get_object_or_404(Shop, slug=self.kwargs['slug'])
+        
+        # Get products with pagination
+        page = self.request.GET.get('page', 1)
+        stock_filter = self.request.GET.get('stock', 'all')
+        products = shop.products.all()
+        
+        if stock_filter == 'in_stock':
+            products = products.filter(stock__gt=0)
+        elif stock_filter == 'out_of_stock':
+            products = products.filter(stock=0)
+            
+        paginator = Paginator(products, 10)  # Show 10 products per page
+        
+        try:
+            products = paginator.page(page)
+        except PageNotAnInteger:
+            products = paginator.page(1)
+        except EmptyPage:
+            products = paginator.page(paginator.num_pages)
+        
+        # Calculate statistics
+        now = datetime.datetime.now()
+        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        
+        orders = OrderItem.objects.filter(product__shop=shop)
+        monthly_orders = orders.filter(created_at__gte=start_of_month)
+        
+        context.update({
+            'shop': shop,
+            'products': products,
+            'total_products': shop.products.count(),
+            'active_products': shop.products.filter(is_active=True).count(),
+            'total_orders': orders.count(),
+            'monthly_orders': monthly_orders.count(),
+            'total_revenue': orders.aggregate(
+                total=Sum('product__price')
+            )['total'] or 0,
+            'monthly_revenue': monthly_orders.aggregate(
+                total=Sum('product__price')
+            )['total'] or 0,
+            
+            # Order statistics
+            'delivered_orders': orders.filter(status='delivered').count(),
+            'pending_orders': orders.filter(status='pending').count(),
+            'cancelled_orders': orders.filter(status='cancelled').count(),
+            
+            # Revenue chart data
+            'monthly_revenue_data': orders.annotate(
+                month=TruncMonth('created_at')
+            ).values('month').annotate(
+                revenue=Sum('product__price')
+            ).order_by('month')
+        })
+        
         return context

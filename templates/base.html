@@ -65,26 +65,14 @@
                                         <i class="fas fa-box me-2"></i>My Orders
                                     </a>
                                 </li>
-                                {% if user.is_seller %}
-                                    {% if user.shop %}
-                                        <li>
-                                            <a class="dropdown-item" href="{% url 'products:shop_dashboard' user.shop.slug %}">
-                                                <i class="fas fa-store me-2"></i>Shop Dashboard
-                                            </a>
-                                        </li>
-                                    {% else %}
-                                        <li>
-                                            <a class="dropdown-item" href="{% url 'products:shop_create' %}">
-                                                <i class="fas fa-store me-2"></i>Create Shop
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="{% url 'users:logout' %}">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </a>
+                                    <form method="post" action="{% url 'users:logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
                                 </li>
                             </ul>
                         </li>
