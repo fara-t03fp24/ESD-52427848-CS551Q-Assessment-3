@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ shop.name }} Dashboard - PrintCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-line me-2"></i>Shop Dashboard</h1>
+        <div>
+            <a href="{% url 'products:shop_detail' shop.slug %}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-store me-2"></i>View Shop
+            </a>
+            <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Model
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">
+                        <i class="fas fa-cube me-2"></i>Total Products
+                    </h5>
+                    <p class="display-4 mb-0">{{ total_products }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">
+                        <i class="fas fa-check-circle me-2"></i>Active Models
+                    </h5>
+                    <p class="display-4 mb-0">{{ active_products }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">
+                        <i class="fas fa-shopping-cart me-2"></i>Total Orders
+                    </h5>
+                    <p class="display-4 mb-0">{{ total_orders }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title mb-0"><i class="fas fa-cubes me-2"></i>Your 3D Models</h3>
+        </div>
+        <div class="card-body">
+            {% if products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Print Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if product.images.exists %}
+                                                <img src="{{ product.images.first.image.url }}" 
+                                                     alt="{{ product.name }}" 
+                                                     class="me-2" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="bg-light d-flex align-items-center justify-content-center me-2" 
+                                                     style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-cube text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                            {{ product.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ product.category.name }}</td>
+                                    <td>${{ product.price }}</td>
+                                    <td>
+                                        {% if product.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ product.print_time_hours }} hours</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'products:product_detail' product.slug %}" 
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'products:product_update' product.slug %}" 
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'products:product_delete' product.slug %}" 
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-cube fa-3x text-muted mb-3"></i>
+                    <p class="lead">You haven't added any 3D models yet.</p>
+                    <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add Your First Model
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
