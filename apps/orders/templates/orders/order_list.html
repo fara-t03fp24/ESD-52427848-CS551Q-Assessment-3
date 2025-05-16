@@ -1,68 +1,77 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Print Orders - PrintCraft{% endblock %}
 
-{% block content %}
-<h1 class="mb-4"><i class="fas fa-print me-2"></i>My Print Orders</h1>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'orders/css/orders.css' %}">
+{% endblock %}
 
-{% if orders %}
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th><i class="fas fa-cube me-1"></i>Order ID</th>
-                    <th><i class="fas fa-calendar-alt me-1"></i>Date</th>
-                    <th><i class="fas fa-spinner me-1"></i>Status</th>
-                    <th><i class="fas fa-money-bill me-1"></i>Total Amount</th>
-                    <th><i class="fas fa-sliders me-1"></i>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
+{% block content %}
+<div class="orders-container">
+    <div class="orders-header">
+        <h1><i class="fas fa-print me-2"></i>My Print Orders</h1>
+    </div>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
                     <tr>
-                        <td>#{{ order.id }}</td>
-                        <td>{{ order.created_at|date:"M d, Y" }}</td>
-                        <td>
-                            <span class="badge {% if order.status == 'pending' %}bg-warning
-                                             {% elif order.status == 'processing' %}bg-info
-                                             {% elif order.status == 'printing' %}bg-primary
-                                             {% elif order.status == 'shipped' %}bg-success
-                                             {% elif order.status == 'delivered' %}bg-success
-                                             {% else %}bg-danger{% endif %}">
-                                <i class="fas {% if order.status == 'pending' %}fa-hourglass-half
-                                           {% elif order.status == 'processing' %}fa-cog fa-spin
-                                           {% elif order.status == 'printing' %}fa-print
-                                           {% elif order.status == 'shipped' %}fa-truck-fast
-                                           {% elif order.status == 'delivered' %}fa-box-check
-                                           {% else %}fa-triangle-exclamation{% endif %} me-1"></i>
-                                {{ order.get_status_display }}
-                            </span>
-                        </td>
-                        <td><i class="fas fa-dollar-sign me-1"></i>{{ order.total_amount }}</td>
-                        <td>
-                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-cube me-1"></i>View Model Details
-                            </a>
-                            {% if order.status == 'pending' %}
-                                <form method="post" action="{% url 'orders:cancel_order' order.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-print-slash me-1"></i>Cancel Print
-                                    </button>
-                                </form>
-                            {% endif %}
-                        </td>
+                        <th><i class="fas fa-cube me-1"></i>Order ID</th>
+                        <th><i class="fas fa-calendar-alt me-1"></i>Date</th>
+                        <th><i class="fas fa-spinner me-1"></i>Status</th>
+                        <th><i class="fas fa-money-bill me-1"></i>Total Amount</th>
+                        <th><i class="fas fa-sliders me-1"></i>Actions</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% else %}
-    <div class="text-center">
-        <p class="lead"><i class="fas fa-cubes me-2"></i>You haven't ordered any 3D prints yet.</p>
-        <a href="{% url 'products:product_list' %}" class="btn btn-primary">
-            <i class="fas fa-shapes me-1"></i>Browse 3D Models
-        </a>
-    </div>
-{% endif %}
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'pending' %}bg-warning
+                                                 {% elif order.status == 'processing' %}bg-info
+                                                 {% elif order.status == 'printing' %}bg-primary
+                                                 {% elif order.status == 'shipped' %}bg-success
+                                                 {% elif order.status == 'delivered' %}bg-success
+                                                 {% else %}bg-danger{% endif %}">
+                                    <i class="fas {% if order.status == 'pending' %}fa-hourglass-half
+                                               {% elif order.status == 'processing' %}fa-cog fa-spin
+                                               {% elif order.status == 'printing' %}fa-print
+                                               {% elif order.status == 'shipped' %}fa-truck-fast
+                                               {% elif order.status == 'delivered' %}fa-box-check
+                                               {% else %}fa-triangle-exclamation{% endif %} me-1"></i>
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td><i class="fas fa-dollar-sign me-1"></i>{{ order.total_amount }}</td>
+                            <td>
+                                <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-cube me-1"></i>View Model Details
+                                </a>
+                                {% if order.status == 'pending' %}
+                                    <form method="post" action="{% url 'orders:cancel_order' order.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-print-slash me-1"></i>Cancel Print
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <p class="lead"><i class="fas fa-cubes me-2"></i>You haven't ordered any 3D prints yet.</p>
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+                <i class="fas fa-shapes me-1"></i>Browse 3D Models
+            </a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

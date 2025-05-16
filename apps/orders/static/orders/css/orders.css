@@ -1,0 +1,27 @@
+/* Main Orders Layout */
+.orders-container {
+    padding-top: 80px; /* Add padding to account for fixed navbar */
+}
+
+/* Order List Styles */
+.orders-header {
+    margin-bottom: 2rem;
+}
+
+.orders-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+/* Cart/Queue Styles */
+.print-queue-header {
+    padding-top: 80px; /* Add padding to account for fixed navbar */
+    margin-bottom: 2rem;
+}
+
+.print-queue-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+}
