@@ -159,9 +159,11 @@ apps/
 - Template structure guide
 
 ## Author
-Student ID: 52427848
-Module: Enterprise Software Development
-University of Aberdeen
+| Description | Details |
+|------------|---------|
+| Student ID | 52427848 |
+| Module | Enterprise Software Development |
+| Institution | University of Aberdeen |
 
 ## License
 This project is developed as part of the Enterprise Software Development module assessment at the University of Aberdeen.
