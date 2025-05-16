@@ -1,0 +1,32 @@
+/* Main Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.dashboard-sidebar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid rgba(0,0,0,0.05);
+    position: fixed;
+    height: 100vh;
+    padding: 1.75rem;
+    transition: all 0.3s ease;
+    padding-top: 4rem;
+}
+
+.dashboard-main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    padding-top: 4rem;
+}
+
+/* Shop Selector */
+.shop-selector {
+    max-width: 300px;
+    margin: 0 auto;
+    position: relative;
+    margin-bottom: 2rem;
+}
