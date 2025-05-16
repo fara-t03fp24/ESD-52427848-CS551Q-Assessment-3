@@ -16,9 +16,10 @@ class Command(BaseCommand):
         
         # Ensure we have some categories
         categories = [
-            "Miniatures", "Household", "Toys", "Gadgets", "Art", 
-            "Tools", "Educational", "Architectural", "Fashion", 
-            "Medical", "Robotics", "Electronics"
+            "Miniatures & Figures", "Functional Parts", "Home & Decor", 
+            "Jewelry & Accessories", "Educational Models", "Architectural Models",
+            "Gaming & Entertainment", "Art & Sculptures", "Gadgets & Electronics",
+            "Other"
         ]
         
         category_objects = []
@@ -41,7 +42,7 @@ class Command(BaseCommand):
             user = User.objects.filter(is_superuser=True).first()
 
         if not Shop.objects.exists():
-            shop = Shop.objects.create(use open data records of 2000-7000 items for your ‘products’ and display them
+            shop = Shop.objects.create(
                 name='sample-shop',
                 owner=user,
                 description='A sample 3D printing shop',
