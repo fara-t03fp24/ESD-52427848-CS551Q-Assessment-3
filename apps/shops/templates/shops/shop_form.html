@@ -3,6 +3,10 @@
 
 {% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Shop - PrintCraft{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shops/css/shop_form.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -11,11 +15,7 @@
                 <div class="card-body p-5">
                     <h2 class="card-title text-center mb-4">
                         <i class="fas fa-store me-2"></i>
-                        {% if form.instance.pk %}
-                            Edit Your Shop
-                        {% else %}
-                            Create Your Shop
-                        {% endif %}
+                        {% if form.instance.pk %}Edit Your Shop{% else %}Create Your Shop{% endif %}
                     </h2>
 
                     <form method="post" enctype="multipart/form-data" novalidate>
@@ -60,6 +60,15 @@
                                     <div class="invalid-feedback d-block">{{ form.logo.errors }}</div>
                                 {% endif %}
                                 <div class="form-text">Upload a logo for your shop (optional).</div>
+                                <div class="image-preview" id="logoPreview">
+                                    {% if form.instance.logo %}
+                                        <img src="{{ form.instance.logo.url }}" alt="Shop Logo" class="logo-preview">
+                                    {% else %}
+                                        <div class="logo-placeholder preview-placeholder">
+                                            <i class="fas fa-store fa-2x"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
 
                             <!-- Banner Image -->
@@ -70,6 +79,15 @@
                                     <div class="invalid-feedback d-block">{{ form.banner.errors }}</div>
                                 {% endif %}
                                 <div class="form-text">Upload a banner image for your shop page (optional).</div>
+                                <div class="image-preview" id="bannerPreview">
+                                    {% if form.instance.banner %}
+                                        <img src="{{ form.instance.banner.url }}" alt="Shop Banner" class="banner-preview">
+                                    {% else %}
+                                        <div class="banner-placeholder preview-placeholder">
+                                            <i class="fas fa-image fa-2x"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 

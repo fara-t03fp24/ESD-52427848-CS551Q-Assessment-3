@@ -1,0 +1,43 @@
+/* Image Preview Styles */
+.image-preview {
+    width: 100%;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #f8f9fa;
+    position: relative;
+}
+
+.logo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.banner-preview {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.preview-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.logo-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #e9ecef;
+}
+
+.banner-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #e9ecef;
+}

@@ -35,10 +35,7 @@
 
 .nav-link {
     font-weight: 700;
-    background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #3182ce;
     position: relative;
     transition: all 0.3s ease;
     font-size: 1.1rem;
@@ -48,6 +45,7 @@
 
 .nav-link:hover {
     transform: translateY(-1px);
+    color: #2c5282;
 }
 
 .nav-link::after {

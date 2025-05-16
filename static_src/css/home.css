@@ -43,10 +43,7 @@ header {
 
 nav a {
   font-weight: 700;
-  background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #3182ce;
   position: relative;
   transition: all 0.3s ease;
   font-size: 1.1rem;
@@ -56,6 +53,7 @@ nav a {
 
 nav a:hover {
   transform: translateY(-1px);
+  color: #2c5282;
 }
 
 nav a::after {
@@ -423,9 +421,46 @@ nav a:hover::after {
 }
 
 footer {
-  background: #f4f4f4;
-  padding: 24px 40px;
+  background: white;
+  padding: 2rem 5%;
   text-align: center;
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 0.95rem;
+  color: #4a5568;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+footer a {
+  color: #3182ce;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #2c5282;
+}
+
+footer .footer-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  footer .container {
+    flex-direction: column;
+    text-align: center;
+  }
 }
