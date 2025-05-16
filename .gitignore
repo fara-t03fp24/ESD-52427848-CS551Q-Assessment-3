@@ -388,3 +388,6 @@ Temporary Items
 *.icloud
 
 celerybeat-schedule.db
+
+# Project specific
+REPORT.md
