@@ -1,4 +1,8 @@
 /* Product List Page */
+.container.mt-5 {
+    padding-top: 2rem;  /* Add extra padding when categories bar is present */
+}
+
 .filter-sidebar {
     background: white;
     border-radius: 0.5rem;

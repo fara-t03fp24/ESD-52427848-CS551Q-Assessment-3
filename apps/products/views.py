@@ -130,6 +130,11 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shop'] = self.object.shop
+        return context
+
     def form_valid(self, form):
         messages.success(self.request, 'Your 3D model has been updated!')
         return super().form_valid(form)
