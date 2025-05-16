@@ -3,9 +3,9 @@
     top: 72px; /* Increased from 60px to add more space below navbar */
     z-index: 1010;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    padding: 1.25rem 0;
-    margin-top: 1.5rem;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
 }
 
 .dashboard-content {
@@ -15,7 +15,7 @@
 .stats-card {
     transition: transform 0.2s, box-shadow 0.2s;
     border-left: 4px solid;
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 1.5rem;
     min-height: 140px;
     display: flex;
@@ -94,7 +94,7 @@
 }
 
 .nav-pills .nav-link.active {
-    background: #0d6efd;
+    background-color: #0d6efd;
     color: white;
     box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
 }
@@ -136,6 +136,39 @@
 .table td {
     padding: 1rem;
     vertical-align: middle;
+}
+
+/* Avatar and Icon Styles */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.icon-shape {
+    width: 48px;
+    height: 48px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-primary { background: linear-gradient(87deg, #5e72e4 0, #825ee4 100%); }
+.bg-gradient-success { background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%); }
+.bg-gradient-warning { background: linear-gradient(87deg, #fb6340 0, #fbb140 100%); }
+.bg-gradient-info { background: linear-gradient(87deg, #11cdef 0, #1171ef 100%); }
+
+/* Text and Font Utilities */
+.text-lg {
+    font-size: 1.25rem;
+}
+
+.font-weight-bolder {
+    font-weight: 700;
 }
 
 /* Responsive Adjustments */

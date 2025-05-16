@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}3D Printing Shops - PrintCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-store me-2"></i>3D Printing Shops</h1>
+        {% if user.is_authenticated %}
+            <a href="{% url 'shops:shop_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Your Shop
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control" placeholder="Search shops..." value="{{ request.GET.search }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if shops %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for shop in shops %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if shop.banner %}
+                            <img src="{{ shop.banner.url }}" class="card-img-top" alt="{{ shop.name }}" style="height: 140px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if shop.logo %}
+                                    <img src="{{ shop.logo.url }}" alt="{{ shop.name }} Logo" class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                                {% else %}
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                        <i class="fas fa-store"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <h5 class="card-title mb-0">{{ shop.name }}</h5>
+                                    <small class="text-muted">{{ shop.owner.get_full_name|default:shop.owner.email }}</small>
+                                </div>
+                            </div>
+                            <p class="card-text">{{ shop.description|truncatewords:30 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small text-muted">
+                                    <span class="me-3">
+                                        <i class="fas fa-cube me-1"></i>{{ shop.product_count }} models
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-shopping-cart me-1"></i>{{ shop.total_sales }} sales
+                                    </span>
+                                </div>
+                                <a href="{% url 'shops:shop_detail' shop.slug %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-store me-1"></i>Visit Shop
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-store fa-3x text-muted mb-3"></i>
+            <p class="lead">No shops found{% if request.GET.search %} matching "{{ request.GET.search }}"{% endif %}.</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'shops:shop_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create Your Shop
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

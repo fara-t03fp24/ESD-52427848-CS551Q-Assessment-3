@@ -22,6 +22,7 @@ urlpatterns = [
     path('products/', include('apps.products.urls')),
     path('orders/', include('apps.orders.urls')),
     path('users/', include('apps.users.urls')),
+    path('shops/', include('apps.shops.urls')),
     
     # Authentication URLs
     path('auth/', include((auth_patterns, 'auth'))),

@@ -117,4 +117,4 @@ def password_change(request):
 @require_POST
 def become_seller(request):
     messages.info(request, 'To become a seller, you need to create your shop first!')
-    return redirect('products:shop_create')
+    return redirect('shops:shop_create')

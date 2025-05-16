@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-md-3 text-end">
                     {% if request.user == shop.owner %}
-                        <a href="{% url 'products:shop_update' shop.slug %}" class="btn btn-outline-primary">
+                        <a href="{% url 'shops:shop_update' shop.slug %}" class="btn btn-outline-primary">
                             <i class="fas fa-edit me-2"></i>Edit Shop
                         </a>
                     {% endif %}
