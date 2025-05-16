@@ -153,11 +153,6 @@ apps/
    - Custom middleware
    - Batch processing
 
-## Documentation
-- Implementation details in `/docs`
-- MVT architecture guide
-- Template structure guide
-
 ## Author
 | Description | Details |
 |------------|---------|
