@@ -1,0 +1,71 @@
+182f523	fara-t03fp24	Fri May 16 23:01:41 2025	refactor: Remove outdated documentation section from README.md
+bec3188	fara-t03fp24	Fri May 16 23:01:12 2025	fix: Update author information format in README.md for clarity
+b9dae49	fara-t03fp24	Fri May 16 22:58:38 2025	Remove REPORT.md from git tracking and update .gitignore
+03231c8	fara-t03fp24	Fri May 16 22:55:35 2025	Update README.md with MVT architecture documentation for University of Aberdeen
+42ffb81	fara-t03fp24	Fri May 16 22:52:51 2025	feat: Add comprehensive project report detailing architectural design, development methodology, and future enhancements
+1f8bfff	fara-t03fp24	Fri May 16 22:41:29 2025	feat: Remove initial categories JSON fixture to streamline product data
+606ae5d	fara-t03fp24	Fri May 16 22:39:06 2025	feat: Update product categories and enhance user tests with comprehensive coverage
+3bb99de	fara-t03fp24	Fri May 16 22:17:43 2025	feat: Add extra padding to product list container and implement product generation command for sample data
+e5c47dc	fara-t03fp24	Fri May 16 21:33:18 2025	feat: Add messages/notifications container with slide-in animation for improved user feedback
+6d8813f	fara-t03fp24	Fri May 16 21:26:10 2025	feat: Enhance order templates and styles; improve layout and add CSS for better presentation
+731abcd	fara-t03fp24	Fri May 16 21:18:41 2025	feat: Refactor dashboard layout and styles; implement new base template for improved structure
+cd7b0e2	fara-t03fp24	Fri May 16 21:00:07 2025	feat: Add logout button to user profile for improved navigation
+bfa58e6	fara-t03fp24	Fri May 16 20:33:30 2025	feat: Update navbar with dropdown for catalog and enhance search input placeholder
+e594f69	fara-t03fp24	Fri May 16 20:16:06 2025	Refactor navbar and homepage layout; implement wishlist feature
+8963f92	fara-t03fp24	Fri May 16 19:21:36 2025	feat: Implement unified search functionality with dropdown results for shops and products
+08dee06	fara-t03fp24	Fri May 16 17:40:40 2025	feat: Enhance product listing and form with improved search functionality and UI updates
+501f61f	fara-t03fp24	Fri May 16 17:15:05 2025	feat: Add main_class block to shop analytics, dashboard, orders, and settings templates
+684844c	fara-t03fp24	Fri May 16 17:09:39 2025	feat(shops): Enhance shop management with analytics, orders, and settings features
+befee54	fara-t03fp24	Fri May 16 16:47:09 2025	feat: Simplify form field attributes and update help texts in ProductForm
+f82a66d	fara-t03fp24	Fri May 16 16:22:32 2025	feat: Refactor product URLs and implement product form template with validation and image upload
+79949cc	fara-t03fp24	Fri May 16 15:46:59 2025	feat: Enhance shop dashboard with product management features and improved UX
+64861a7	fara-t03fp24	Fri May 16 14:55:01 2025	feat: Update layout and styles for shop dashboard and base template
+04c3263	fara-t03fp24	Fri May 16 14:44:12 2025	feat: Enhance shop form with image previews and update footer layout
+55b8d2b	fara-t03fp24	Fri May 16 14:24:36 2025	feat: Add logo image to static files and update image references in templates
+0506a49	fara-t03fp24	Fri May 16 14:18:34 2025	feat: Update .gitignore to include additional media file patterns
+40da4c5	fara-t03fp24	Fri May 16 14:10:10 2025	feat: Add initial Django settings configuration to .env.example
+f859e10	fara-t03fp24	Fri May 16 11:38:30 2025	feat: Revamp shop dashboard layout and enhance user experience with new styles and functionalities
+3f30564	fara-t03fp24	Fri May 16 10:11:17 2025	Add shop management features including listing, creation, and detail views
+d5dcfc6	fara-t03fp24	Thu May 15 16:02:49 2025	feat: Enhance order management and shop functionality
+0119690	fara-t03fp24	Thu May 15 15:00:24 2025	Remove shop statistics section from user profile template for improved clarity
+22abe96	fara-t03fp24	Thu May 15 11:41:28 2025	Add shop dashboard template with statistics and product management features
+c0291a3	fara-t03fp24	Thu May 15 11:19:42 2025	Rearrange registration benefits section; remove seller registration option and update benefit descriptions for improved clarity and user engagement.
+1944b6e	fara-t03fp24	Wed May 14 20:01:30 2025	Refactor user registration and shop creation logic; remove is_seller field from User model and update related views and forms for improved clarity and functionality.
+acab2aa	fara-t03fp24	Wed May 14 17:26:33 2025	Refactor authentication forms and templates for improved user experience; enhance styling and error handling across login, registration, and password change pages.
+81df368	fara-t03fp24	Wed May 14 16:35:16 2025	Enhance user experience and functionality across user-related templates and views
+8e0abbe	fara-t03fp24	Wed May 14 12:30:17 2025	Refactor navbar and home templates for improved styling; add new navbar styles and enhance logo and brand text presentation
+655cf55	fara-t03fp24	Wed May 14 12:05:30 2025	Enhance welcome banner with gradient text and typewriter effect for improved visual appeal
+e64d29d	fara-t03fp24	Wed May 14 11:54:20 2025	Refactor product detail and list templates for improved layout and user experience; update CSS for a modern look; enhance base and home templates with better branding and navigation.
+47c0eb5	fara-t03fp24	Wed May 14 10:24:58 2025	Refactor website layout and styles
+0dc0101	fara-t03fp24	Tue May 13 16:19:54 2025	Add base styles and animations for improved UI components
+7ea02b6	fara-t03fp24	Tue May 13 14:46:14 2025	Update order management system with improved styling
+8fd9fd6	fara-t03fp24	Tue May 13 14:45:55 2025	Enhance product management system with improved UI and features
+fca5154	fara-t03fp24	Tue May 13 14:45:47 2025	Update user profile system with seller features and improved UI
+8914de6	fara-t03fp24	Tue May 13 14:45:11 2025	Update product material type choices with expanded options
+6d01bca	fara-t03fp24	Tue May 13 14:44:57 2025	Add Shop model and link products to shops
+f844d52	fara-t03fp24	Tue May 13 14:44:35 2025	Add seller registration and become-seller functionality to user views
+639ce9e	fara-t03fp24	Tue May 13 14:44:15 2025	Add shop styling with responsive design and enhanced product cards
+4a2ce98	fara-t03fp24	Tue May 13 14:43:53 2025	Add shop dashboard template with model management functionality
+0f6b9b5	fara-t03fp24	Tue May 13 14:43:29 2025	Add shop detail page with product listing and filtering functionality
+9792ce8	fara-t03fp24	Tue May 13 14:43:05 2025	Add is_seller field to User model
+5310ade	fara-t03fp24	Tue May 13 14:42:57 2025	Add shop listing page with search and pagination functionality
+45bb303	fara-t03fp24	Tue May 13 14:42:47 2025	Add shop creation and editing form template
+cf582dc	fara-t03fp24	Tue May 13 14:42:27 2025	Enhancement: Add hexagonal logo style and gradient backgrounds for header/footer
+1d339fe	fara-t03fp24	Thu May 8 20:29:44 2025	Refactor user authentication system to use email as the unique identifier, update related views and templates, and enhance UI with Font Awesome icons for better accessibility.
+a80ff00	fara-t03fp24	Thu May 8 15:27:16 2025	Enhance product list filters with improved UI and accessibility, including updated icons, placeholders, and reset functionality.
+7b673da	fara-t03fp24	Thu May 8 15:00:39 2025	Refactor templates to enhance UI consistency and improve accessibility with Font Awesome icons across cart, checkout, order detail, order list, and product pages.
+a4038c3	fara-t03fp24	Thu May 8 15:00:28 2025	Add product detail and form styles, enhance image handling and modal functionality
+bf26246	fara-t03fp24	Thu May 8 14:24:14 2025	Refactor base.html to remove inline styles and improve footer branding
+b3b5321	fara-t03fp24	Thu May 8 14:16:38 2025	Add CSS files for checkout and order detail pages, and update templates to link them
+1765091	fara-t03fp24	Thu May 8 14:16:22 2025	Add staticfiles directory to .gitignore
+ed1d3cc	fara-t03fp24	Thu May 8 12:53:54 2025	Add products app migrations and initialization files
+b89069d	fara-t03fp24	Thu May 8 12:52:57 2025	Add orders app migrations and initialization files
+d02e9f8	fara-t03fp24	Thu May 8 12:50:48 2025	Configure URLs, static files, and add required dependencies
+dc63d95	fara-t03fp24	Thu May 8 12:50:20 2025	Add user authentication views and templates
+1551864	fara-t03fp24	Thu May 8 12:47:42 2025	Add order templates for cart, checkout, and order management
+a330b02	fara-t03fp24	Thu May 8 12:47:24 2025	Add product templates for listing, detail, form and delete confirmation
+adf585a	fara-t03fp24	Thu May 8 12:47:06 2025	Add base template with navigation and layout
+125ce8b	fara-t03fp24	Thu May 8 12:46:43 2025	Add user registration and update forms
+9eb44d6	fara-t03fp24	Thu May 8 12:46:21 2025	Add core order app files including cart and checkout functionality
+0058d74	fara-t03fp24	Thu May 8 12:45:39 2025	Add core product app files with models, views, forms, and admin configurations
+721a236	fara-t03fp24	Wed May 7 10:35:37 2025	Add initial project structure with Django apps and configurations

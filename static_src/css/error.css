@@ -1,0 +1,32 @@
+.error-page {
+    padding: 3rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.error-page:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.error-page i {
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+.error-page .display-4 {
+    font-weight: 700;
+    color: #1a202c;
+}
+
+@media (max-width: 768px) {
+    .error-page {
+        padding: 2rem;
+    }
+    
+    .error-page i {
+        font-size: 3rem !important;
+    }
+}

@@ -4,6 +4,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
+from django.views.defaults import page_not_found, server_error, permission_denied
+
+# Custom error handlers
+handler404 = lambda request, exception: page_not_found(request, exception, template_name='errors/404.html')
+handler500 = lambda request: server_error(request, template_name='errors/500.html')
+handler403 = lambda request, exception: permission_denied(request, exception, template_name='errors/403.html')
 
 # Authentication URL patterns
 auth_patterns = [
