@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - {{ shop.name }} - PrintCraft{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shops/css/shop_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'shops/css/shop_settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'shops/includes/shop_sidebar.html' with active_tab='settings' %}
+
+    <div class="dashboard-main">
+        <div class="content-section">
+            <div class="section-header mb-4">
+                <h2><i class="fas fa-cog me-2"></i>Shop Settings</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Shop Details Form -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Shop Details</h3>
+                            
+                            <form method="post" enctype="multipart/form-data" novalidate>
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Shop Name</label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.name.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">This will be your shop's URL: printcraft.com/shops/{{ form.name.value }}</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.description.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Shop Logo</label>
+                                        <div class="logo-preview mb-2">
+                                            {% if shop.logo %}
+                                                <img src="{{ shop.logo.url }}" alt="Shop Logo" class="current-logo">
+                                            {% else %}
+                                                <div class="logo-placeholder">
+                                                    <i class="fas fa-store"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {{ form.logo }}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Shop Banner</label>
+                                        <div class="banner-preview mb-2">
+                                            {% if shop.banner %}
+                                                <img src="{{ shop.banner.url }}" alt="Shop Banner" class="current-banner">
+                                            {% else %}
+                                                <div class="banner-placeholder">
+                                                    <i class="fas fa-image"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {{ form.banner }}
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-4">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label">Shop is Active</label>
+                                    <div class="form-text">Inactive shops won't appear in search results.</div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-danger mb-4">These actions cannot be undone.</p>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteShopModal">
+                                    <i class="fas fa-trash-alt me-2"></i>Delete Shop
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop Info Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Shop Information</h3>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    Created: {{ shop.created_at|date:"F j, Y" }}
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-cube me-2"></i>
+                                    Products: {{ total_products }}
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    Total Orders: {{ total_orders }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Shop Modal -->
+<div class="modal fade" id="deleteShopModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Shop
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your shop? This action cannot be undone.</p>
+                <ul class="text-danger">
+                    <li>All your products will be deleted</li>
+                    <li>Your shop URL will become available to others</li>
+                    <li>Existing orders will be preserved for record-keeping</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'shops:shop_delete' shop.slug %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Shop
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preview uploaded images
+    function previewImage(input, previewClass) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.querySelector(previewClass);
+                preview.innerHTML = `<img src="${e.target.result}" class="current-${input.name}">`;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    document.querySelector('#id_logo').addEventListener('change', function() {
+        previewImage(this, '.logo-preview');
+    });
+
+    document.querySelector('#id_banner').addEventListener('change', function() {
+        previewImage(this, '.banner-preview');
+    });
+</script>
+{% endblock %}

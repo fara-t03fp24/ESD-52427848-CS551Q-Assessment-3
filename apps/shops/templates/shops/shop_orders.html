@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Orders - {{ shop.name }} - PrintCraft{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shops/css/shop_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'shops/css/shop_orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'shops/includes/shop_sidebar.html' with active_tab='orders' %}
+
+    <div class="dashboard-main">
+        <div class="content-section">
+            <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-shopping-cart me-2"></i>Orders</h2>
+                
+                <!-- Order Filters -->
+                <div class="btn-group">
+                    <a href="?status=all" class="btn btn-outline-secondary {% if not request.GET.status or request.GET.status == 'all' %}active{% endif %}">
+                        All
+                    </a>
+                    <a href="?status=pending" class="btn btn-outline-secondary {% if request.GET.status == 'pending' %}active{% endif %}">
+                        Pending
+                    </a>
+                    <a href="?status=processing" class="btn btn-outline-secondary {% if request.GET.status == 'processing' %}active{% endif %}">
+                        Processing
+                    </a>
+                    <a href="?status=completed" class="btn btn-outline-secondary {% if request.GET.status == 'completed' %}active{% endif %}">
+                        Completed
+                    </a>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user.get_full_name|default:order.user.email }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if order.product.images.exists %}
+                                        <img src="{{ order.product.images.first.image.url }}" 
+                                             class="order-product-image me-2" 
+                                             alt="{{ order.product.name }}">
+                                    {% endif %}
+                                    {{ order.product.name }}
+                                </div>
+                            </td>
+                            <td>{{ order.quantity }}</td>
+                            <td>${{ order.total_price }}</td>
+                            <td>
+                                <span class="badge bg-{{ order.status|lower }}-subtle">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'orders:order_detail' order.id %}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if order.status == 'pending' %}
+                                        <form method="post" action="{% url 'shops:update_order_status' order.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" name="status" value="processing" 
+                                                    class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                                <p class="mb-0">No orders found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% include 'includes/pagination.html' with page_obj=orders %}
+        </div>
+    </div>
+</div>
+{% endblock %}

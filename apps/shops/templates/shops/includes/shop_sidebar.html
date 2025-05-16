@@ -1,0 +1,47 @@
+<!-- Shop Sidebar -->
+<div class="dashboard-sidebar">
+    <!-- Shop Selector -->
+    <div class="shop-selector-header">
+        <div class="container-fluid">
+            <div class="shop-selector py-3">
+                <h6 class="text-center mb-2">Select a Shop</h6>
+                <form method="get" action="{% url 'shops:shop_select' %}" class="mb-0">
+                    <select name="shop_slug" class="form-select" onchange="this.form.submit()">
+                        {% for user_shop in request.user.shops.all %}
+                            <option value="{{ user_shop.slug }}" {% if user_shop == shop %}selected{% endif %}>
+                                {{ user_shop.name }}
+                            </option>
+                        {% endfor %}
+                        <option value="create" {% if not request.user.shops.exists %}selected{% endif %}>➕ Create New Shop</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="dashboard-nav">
+        <a href="{% url 'shops:shop_dashboard' shop.slug %}" 
+           class="nav-link {% if active_tab == 'products' %}active{% endif %}">
+            <i class="fas fa-box"></i> Products
+        </a>
+        <a href="{% url 'shops:shop_analytics' shop.slug %}" 
+           class="nav-link {% if active_tab == 'analytics' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i> Analytics
+        </a>
+        <a href="{% url 'shops:shop_orders' shop.slug %}" 
+           class="nav-link {% if active_tab == 'orders' %}active{% endif %}">
+            <i class="fas fa-shopping-cart"></i> Orders
+        </a>
+        <a href="{% url 'shops:shop_settings' shop.slug %}" 
+           class="nav-link {% if active_tab == 'settings' %}active{% endif %}">
+            <i class="fas fa-cog"></i> Shop Settings
+        </a>
+        <div class="nav-link disabled">
+            <i class="fas fa-star"></i> Reviews <span class="badge bg-warning">Soon</span>
+        </div>
+        <div class="nav-link disabled">
+            <i class="fas fa-comments"></i> Chats <span class="badge bg-warning">Soon</span>
+        </div>
+    </div>
+</div>

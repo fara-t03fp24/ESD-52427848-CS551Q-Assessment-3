@@ -1,109 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ shop.name }} Dashboard - PrintCraft{% endblock %}
+{% block title %}Dashboard - {{ shop.name }} - PrintCraft{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'shops/css/shop_dashboard.css' %}">
 {% endblock %}
 
-{% block main_class %}p-0{% endblock %}
-
 {% block content %}
 <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="dashboard-sidebar">
-        <!-- Shop Selector -->
-        <div class="shop-selector-header">
-            <div class="container-fluid">
-                <div class="shop-selector py-3">
-                    <h6 class="text-center mb-2">Select a Shop</h6>
-                    <form method="get" action="{% url 'shops:shop_select' %}" class="mb-0">
-                        <select name="shop_slug" class="form-select" onchange="this.form.submit()">
-                            {% for user_shop in request.user.shops.all %}
-                                <option value="{{ user_shop.slug }}" {% if user_shop == shop %}selected{% endif %}>
-                                    {{ user_shop.name }}
-                                </option>
-                            {% endfor %}
-                            <option value="create" {% if not request.user.shops.exists %}selected{% endif %}>➕ Create New Shop</option>
-                        </select>
-                    </form>
-                </div>
-            </div>
-        </div>
+    {% include 'shops/includes/shop_sidebar.html' with active_tab='products' %}
 
-        <!-- Navigation Menu -->
-        <div class="dashboard-nav">
-            <a href="#products" class="nav-link active">
-                <i class="fas fa-box"></i> Products
-            </a>
-            <a href="#analytics" class="nav-link">
-                <i class="fas fa-chart-line"></i> Analytics
-            </a>
-            <a href="#orders" class="nav-link">
-                <i class="fas fa-shopping-cart"></i> Orders
-            </a>
-            <a href="#settings" class="nav-link">
-                <i class="fas fa-cog"></i> Shop Settings
-            </a>
-            <a href="#reviews" class="nav-link">
-                <i class="fas fa-star"></i> Reviews <span class="badge bg-warning">Soon</span>
-            </a>
-            <a href="#chats" class="nav-link">
-                <i class="fas fa-comments"></i> Chats <span class="badge bg-warning">Soon</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Main Content -->
     <div class="dashboard-main">
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-box"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ total_products }}</h3>
-                    <p>Total Products</p>
-                    <small class="text-success">({{ active_products }} active)</small>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ monthly_orders }}</h3>
-                    <p>Monthly Orders</p>
-                    <small class="text-success">${{ monthly_revenue }}</small>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ pending_orders }}</h3>
-                    <p>Pending Orders</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>${{ total_revenue }}</h3>
-                    <p>Total Revenue</p>
-                </div>
-            </div>
-        </div>
-
         <div class="content-section">
             <div class="section-header d-flex justify-content-between align-items-center mb-4">
-                <h2>Products</h2>
+                <h2><i class="fas fa-cube me-2"></i>Products</h2>
                 <a href="{% url 'products:product_create' shop.slug %}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Add Product
+                    <i class="fas fa-plus me-2"></i>Add New Product
                 </a>
             </div>
 
@@ -111,11 +24,16 @@
             <form method="get" class="mb-4">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="flex-grow-1">
-                        <input type="text" 
-                               name="search" 
-                               class="form-control" 
-                               placeholder="Search products..."
-                               value="{{ request.GET.search|default:'' }}">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" 
+                                   name="search" 
+                                   class="form-control" 
+                                   placeholder="Search products..."
+                                   value="{{ request.GET.search|default:'' }}">
+                        </div>
                     </div>
                     <div class="btn-group">
                         <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}stock=all" 
@@ -134,121 +52,77 @@
                 </div>
             </form>
 
-            <!-- Product Table -->
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in products %}
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    {% if product.images.exists %}
-                                        <img src="{{ product.images.first.image.url }}" class="product-image" alt="{{ product.name }}">
-                                    {% else %}
-                                        <div class="product-image-placeholder">
-                                            <i class="fas fa-cube"></i>
-                                        </div>
-                                    {% endif %}
-                                    <div class="ms-3">
-                                        <h6 class="mb-0">{{ product.name }}</h6>
-                                        <small class="text-muted">ID: {{ product.id }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${{ product.price }}</td>
-                            <td>
-                                <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">
-                                    {{ product.stock }}
+            <!-- Product Grid -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 product-card">
+                        {% if product.images.exists %}
+                            <img src="{{ product.images.first.image.url }}" 
+                                 class="card-img-top product-image" 
+                                 alt="{{ product.name }}">
+                        {% else %}
+                            <div class="card-img-top product-image-placeholder">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">{{ product.name }}</h5>
+                                <span class="badge {% if product.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if product.is_active %}Active{% else %}Inactive{% endif %}
                                 </span>
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'products:toggle_status' product.id %}" class="d-inline">
+                            </div>
+                            
+                            <div class="product-meta mb-3">
+                                <span>
+                                    <i class="fas fa-dollar-sign"></i> {{ product.price }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-box"></i> {{ product.stock }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-clock"></i> {{ product.print_time_hours }}h
+                                </span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'products:product_update' product.slug %}" 
+                                   class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <a href="{% url 'products:product_detail' product.slug %}" 
+                                   class="btn btn-sm btn-outline-secondary flex-grow-1">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <form method="post" 
+                                      action="{% url 'products:toggle_status' product.id %}" 
+                                      class="flex-shrink-0">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-link p-0 border-0">
-                                        <div class="form-check form-switch">
-                                            <input type="checkbox" class="form-check-input" 
-                                                   {% if product.is_active %}checked{% endif %}
-                                                   disabled>
-                                        </div>
+                                    <button type="submit" 
+                                            class="btn btn-sm {% if product.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                        <i class="fas {% if product.is_active %}fa-times{% else %}fa-check{% endif %}"></i>
                                     </button>
                                 </form>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{% url 'products:product_update' product.slug %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-sm btn-outline-info">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            {% if messages %}
-            <div class="alert-container">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-cube fa-3x text-muted mb-3"></i>
+                    <h3>No Products Found</h3>
+                    <p class="text-muted">Start by adding your first 3D model</p>
+                    <a href="{% url 'products:product_create' shop.slug %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add New Product
+                    </a>
+                </div>
                 {% endfor %}
             </div>
-            {% endif %}
 
-            <!-- Pagination -->
-            {% if products.has_other_pages %}
-            <nav aria-label="Products pagination" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if products.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if request.GET.stock %}&stock={{ request.GET.stock }}{% endif %}">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in products.paginator.page_range %}
-                        {% if products.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if request.GET.stock %}&stock={{ request.GET.stock }}{% endif %}">
-                                {{ num }}
-                            </a>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if products.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}{% if request.GET.stock %}&stock={{ request.GET.stock }}{% endif %}">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+            {% include 'includes/pagination.html' with page_obj=products %}
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
 {% endblock %}

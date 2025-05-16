@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics - {{ shop.name }} - PrintCraft{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shops/css/shop_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'shops/css/shop_analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'shops/includes/shop_sidebar.html' with active_tab='analytics' %}
+
+    <div class="dashboard-main">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ total_products }}</h3>
+                    <p>Total Products</p>
+                    <small class="text-success">({{ active_products }} active)</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ monthly_orders }}</h3>
+                    <p>Monthly Orders</p>
+                    <small class="text-success">${{ monthly_revenue }}</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ pending_orders }}</h3>
+                    <p>Pending Orders</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>${{ total_revenue }}</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h3>Sales Overview</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h3>Top Products</h3>
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'shops/js/analytics.js' %}"></script>
+{% endblock %}
