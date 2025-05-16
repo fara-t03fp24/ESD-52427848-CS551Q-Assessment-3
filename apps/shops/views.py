@@ -38,6 +38,14 @@ class ShopListView(ListView):
             total_sales=Count('products__orderitem')
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search = self.request.GET.get('search')
+        if search:
+            # Pass the filtered shops to the base template context
+            context['shops'] = self.get_queryset()[:5]  # Limit to 5 results for dropdown
+        return context
+
 
 class ShopCreateView(LoginRequiredMixin, CreateView):
     model = Shop

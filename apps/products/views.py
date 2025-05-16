@@ -21,33 +21,36 @@ class ProductListView(ListView):
         search = self.request.GET.get('q', '').strip()
         
         if search:
-            # Search in products
-            product_results = queryset.filter(
+            queryset = queryset.filter(
                 Q(name__icontains=search) |
-                Q(description__icontains=search)
-            )
-            
-            # Search in shops
-            shop_results = Shop.objects.filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
-            )
-            
-            # Get products from matching shops
-            shop_products = queryset.filter(shop__in=shop_results)
-            
-            # Combine results and remove duplicates
-            queryset = (product_results | shop_products).distinct()
-            
-            # Prioritize products from matching shops and those with matching names
-            if shop_results.exists():
-                queryset = queryset.order_by('-shop__name__icontains', '-name__icontains', 'name')
+                Q(description__icontains=search) |
+                Q(shop__name__icontains=search)
+            ).distinct()
         
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q', '')
+        search = self.request.GET.get('q', '').strip()
+        context['query'] = search
+
+        if search:
+            # Get matching shops
+            shops = Shop.objects.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search),
+                is_active=True
+            )[:5]  # Limit to 5 shops
+
+            # Get matching products
+            products = self.get_queryset()[:5]  # Limit to 5 products
+
+            # Add search results for the dropdown
+            context['search_results'] = {
+                'shops': shops,
+                'products': products
+            }
+
         return context
 
 
