@@ -303,6 +303,36 @@
     color: #6F3FF5;
 }
 
+/* Messages/Notifications Container */
+.messages-container {
+    position: fixed;
+    top: 80px; /* Position below navbar with some spacing */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1040; /* Higher than navbar's 1030 */
+    width: 100%;
+    max-width: 600px;
+    padding: 0 15px;
+}
+
+.messages-container .alert {
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 991.98px) {
     .navbar {
