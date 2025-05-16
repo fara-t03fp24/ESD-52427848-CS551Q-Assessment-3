@@ -7,10 +7,8 @@ class ProductForm(forms.ModelForm):
     shop = forms.ModelChoiceField(
         queryset=None,
         widget=forms.Select(attrs={
-            'class': 'form-select',
-            'aria-label': 'Select shop'
-        }),
-        help_text='Choose which shop this model belongs to'
+            'class': 'form-select'
+        })
     )
 
     class Meta:
@@ -23,49 +21,40 @@ class ProductForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the name of your 3D model'
+                'class': 'form-control'
             }),
             'category': forms.Select(attrs={
-                'class': 'form-select',
-                'aria-label': 'Select model category'
+                'class': 'form-select'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Describe your 3D model, including any special printing instructions or recommendations'
+                'rows': 4
             }),
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': '0',
-                'step': '0.01',
-                'placeholder': 'Price per print'
+                'step': '0.01'
             }),
             'stock': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': '0',
-                'placeholder': 'Number of prints available'
+                'min': '0'
             }),
             'print_time_hours': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': '1',
-                'placeholder': 'Estimated print time in hours'
+                'min': '1'
             }),
             'material_type': forms.Select(attrs={
-                'class': 'form-select',
-                'aria-label': 'Select printing material'
+                'class': 'form-select'
             }),
             'difficulty_level': forms.Select(attrs={
-                'class': 'form-select',
-                'aria-label': 'Select difficulty level'
+                'class': 'form-select'
             }),
             'weight_grams': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': '1',
-                'placeholder': 'Weight in grams'
+                'min': '1'
             }),
             'dimensions': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Format: length x width x height in mm'
+                'class': 'form-control'
             }),
             'is_active': forms.CheckboxInput(attrs={
                 'class': 'form-check-input',
@@ -73,17 +62,9 @@ class ProductForm(forms.ModelForm):
             })
         }
         help_texts = {
-            'name': 'Choose a descriptive name for your 3D model',
             'description': 'Include printing temperature, infill recommendations, and any special requirements',
-            'price': 'Set your price per print, including material costs',
-            'stock': 'How many times can you print this model?',
-            'print_time_hours': 'Average time to complete one print',
-            'material_type': 'Choose the recommended material for printing this model',
-            'difficulty_level': 'How challenging is it to print this model successfully?',
-            'weight_grams': 'Final printed model weight',
-            'dimensions': 'Final printed model dimensions',
-            'is_active': 'Uncheck to hide this model from your shop',
-            'shop': 'Choose which shop this model belongs to'
+            'price': 'Include material costs in your price per print',
+            'dimensions': 'Format: length x width x height in mm'
         }
 
     def __init__(self, *args, user=None, **kwargs):
