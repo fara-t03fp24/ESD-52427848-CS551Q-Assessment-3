@@ -73,3 +73,16 @@ class ProductImage(BaseModel):
     
     def __str__(self) -> str:
         return f"Image for {str(self.product.name)}"
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='wishlists')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlists')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.email}'s wish - {self.product.name}"

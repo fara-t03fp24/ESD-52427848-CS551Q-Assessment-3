@@ -9,20 +9,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <div class="logo">
-                    <img src="{% static 'images/icon.png' %}" alt="PrintCraft Logo">
-                    <div class="brand-text">
-                        <h2>PrintCraft</h2>
-                        <small class="brand-subtitle">Physical 3D Prints • Buy & Sell</small>
-                    </div>
-                </div>
+            <a class="navbar-brand" href="{% url 'products:product_list' %}">
+                <img src="{% static 'images/icon.png' %}" alt="PrintCraft Logo" class="logo">
+            </a>
+            
+            <a href="#" class="catalog-btn d-none d-lg-flex" data-bs-toggle="dropdown">
+                <i class="fas fa-th"></i>
+                <span>Catalog</span>
+            </a>
+            
+            <a href="#" class="location-selector d-none d-lg-flex" data-bs-toggle="dropdown">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Select Location</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -30,115 +33,95 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <form method="get" action="{% url 'products:product_list' %}" class="search-form">
+                    <div class="search-container">
+                        <input type="text" 
+                               name="q" 
+                               class="search-input" 
+                               placeholder="I'm looking for..." 
+                               value="{{ query }}"
+                               autocomplete="off">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        {% if search_results %}
+                        <div class="search-results">
+                            {% if search_results.shops %}
+                                <div class="search-category">Shops</div>
+                                {% for shop in search_results.shops %}
+                                    <a href="{% url 'shops:shop_detail' shop.slug %}" class="search-result-item">
+                                        <div class="shop-logo">
+                                            {% if shop.logo %}
+                                                <img src="{{ shop.logo.url }}" alt="{{ shop.name }}">
+                                            {% else %}
+                                                <i class="fas fa-store"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="shop-info">
+                                            <div class="shop-name">{{ shop.name }} <i class="fas fa-chevron-right"></i></div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </form>
+                
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'products:product_list' %}">
-                            <i class="fas fa-shapes me-1"></i>Marketplace 
+                        {% if user.is_authenticated %}
+                        <a class="nav-link" href="{% url 'users:profile' %}" title="Profile">
+                            <i class="far fa-user"></i>
+                            <span class="nav-text">Account</span>
+                        </a>
+                        {% else %}
+                        <a class="nav-link" href="{% url 'users:login' %}" title="Sign in">
+                            <i class="far fa-user"></i>
+                            <span class="nav-text">Sign in</span>
+                        </a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders:order_list' %}" title="Orders">
+                            <i class="fas fa-box"></i>
+                            <span class="nav-text">Orders</span>
                         </a>
                     </li>
-                    <li class="nav-item flex-grow-1">
-                        <form method="get" action="{% url 'products:product_list' %}" class="d-flex search-form">
-                            <div class="search-container">
-                                <input type="text" 
-                                       name="q" 
-                                       class="search-input form-control" 
-                                       placeholder="Search models, shops, makers..." 
-                                       value="{{ query }}"
-                                       autocomplete="off">
-                                {% if search_results %}
-                                <div class="search-results">
-                                    {% if search_results.shops %}
-                                        <div class="search-category">Shops</div>
-                                        {% for shop in search_results.shops %}
-                                            <a href="{% url 'shops:shop_detail' shop.slug %}" class="search-result-item">
-                                                <div class="shop-logo">
-                                                    {% if shop.logo %}
-                                                        <img src="{{ shop.logo.url }}" alt="{{ shop.name }}">
-                                                    {% else %}
-                                                        <i class="fas fa-store"></i>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="shop-info">
-                                                    <div class="shop-name">{{ shop.name }}</div>
-                                                    <div class="shop-subtitle">{{ shop.description|truncatechars:50 }}</div>
-                                                </div>
-                                            </a>
-                                        {% endfor %}
-                                    {% endif %}
-                                    {% if search_results.products %}
-                                        <div class="search-category">Products</div>
-                                        {% for product in search_results.products %}
-                                            <a href="{% url 'products:product_detail' product.slug %}" class="search-result-item">
-                                                <div class="product-image">
-                                                    {% if product.images.exists %}
-                                                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
-                                                    {% else %}
-                                                        <i class="fas fa-cube"></i>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="product-info">
-                                                    <div class="product-name">{{ product.name }}</div>
-                                                    <div class="product-subtitle">${{ product.price }} • {{ product.shop.name }}</div>
-                                                </div>
-                                            </a>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </form>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'products:wishlist' %}" title="Favorites">
+                            <i class="far fa-heart"></i>
+                            <span class="nav-text">Favorite</span>
+                            {% if wishlist_count > 0 %}
+                                <span class="wishlist-count">{{ wishlist_count }}</span>
+                            {% endif %}
+                        </a>
                     </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'orders:cart' %}">
-                                <i class="fas fa-shopping-cart me-1"></i>Cart
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>{{ user.get_full_name|default:user.email }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'users:profile' %}">
-                                        <i class="fas fa-user me-2"></i>My Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'orders:order_list' %}">
-                                        <i class="fas fa-box me-2"></i>My Orders
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="post" action="{% url 'users:logout' %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:login' %}">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:register' %}">
-                                <i class="fas fa-user-plus me-1"></i>Register
-                            </a>
-                        </li>
-                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders:cart' %}" title="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="nav-text">Cart</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <div class="categories-bar d-none d-lg-block">
+        <div class="container">
+            <ul class="categories-list">
+                {% for category in categories %}
+                    <li>
+                        <a href="{% url 'products:product_list' %}?category={{ category.slug }}" class="category-link">
+                            <i class="fas fa-cube"></i>
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
     {% if messages %}
         <div class="container messages-container">
@@ -155,17 +138,57 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-5 bg-light">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-4 text-center text-md-start">
-                    <div class="copyright">&copy; 2025 PrintCraft. All rights reserved.</div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">About Us</h5>
+                    <p class="text-muted small">PrintCraft is your go-to marketplace for high-quality 3D printed models. We connect talented makers with collectors worldwide.</p>
                 </div>
-                <div class="col-md-8">
-                    <div class="footer-links text-center text-md-end">
-                        <a href="{% url 'products:product_list' %}" class="me-3">Browse Models</a>
-                        <a href="{% url 'shops:shop_list' %}" class="me-3">Find Shops</a>
-                        <a href="mailto:support@printcraft.com">Contact</a>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">For Users</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'products:product_list' %}" class="text-muted text-decoration-none">Browse Models</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'shops:shop_list' %}" class="text-muted text-decoration-none">Find Shops</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'orders:cart' %}" class="text-muted text-decoration-none">Shopping Cart</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">For Sellers</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'shops:shop_create' %}" class="text-muted text-decoration-none">Open a Shop</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="text-muted text-decoration-none">Seller Guidelines</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="text-muted text-decoration-none">Seller Dashboard</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3">Follow Us</h5>
+                    <div class="social-links">
+                        <a href="https://facebook.com" class="text-muted text-decoration-none me-3" target="_blank">
+                            <i class="fab fa-facebook-square fa-2x"></i>
+                        </a>
+                        <a href="https://instagram.com" class="text-muted text-decoration-none me-3" target="_blank">
+                            <i class="fab fa-instagram fa-2x"></i>
+                        </a>
+                        <a href="https://youtube.com" class="text-muted text-decoration-none" target="_blank">
+                            <i class="fab fa-youtube fa-2x"></i>
+                        </a>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-muted small mb-0">&copy; {% now "Y" %} PrintCraft</p>
+                        <p class="text-muted small mb-0">All rights reserved</p>
                     </div>
                 </div>
             </div>
@@ -173,6 +196,18 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-dismiss notifications
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000); // Dismiss after 5 seconds
+            });
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Marketplace - PrintCraft{% endblock %}
+{% block title %}{% if current_category %}{{ current_category.name }} - {% endif %}PrintCraft{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'products/css/products.css' %}">
@@ -9,10 +9,19 @@
 
 {% block content %}
 <div class="container">
-    {% if query %}
+    {% if query and products %}
         <div class="alert alert-info mb-4">
             <i class="fas fa-info-circle me-2"></i>
-            Showing results for "{{ query }}" ({{ page_obj.paginator.count }} items found)
+            {% if current_category %}
+                Showing {{ current_category.name }} models
+                {% if query %} matching "{{ query }}"{% endif %}
+            {% else %}
+                Showing results for "{{ query }}"
+            {% endif %}
+            ({{ page_obj.paginator.count }} items found)
+            <a href="{% url 'products:product_list' %}" class="btn btn-sm btn-outline-primary ms-3">
+                <i class="fas fa-times me-1"></i>Clear Filters
+            </a>
         </div>
     {% endif %}
 
@@ -46,10 +55,20 @@
                                         <span class="h5 mb-0">
                                             <i class="fas fa-dollar-sign me-1"></i>{{ product.price }}
                                         </span>
-                                        <a href="{% url 'products:product_detail' product.slug %}" 
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye me-1"></i>View Details
-                                        </a>
+                                        <div class="btn-group">
+                                            <a href="{% url 'products:product_detail' product.slug %}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            {% if user.is_authenticated %}
+                                                <form method="post" action="{% url 'products:toggle_wishlist' product.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm {% if product.is_wishlisted %}active{% endif %}">
+                                                        <i class="fas fa-heart"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -57,43 +76,7 @@
                     {% endfor %}
                 </div>
 
-                {% if is_paginated %}
-                    <nav class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">
-                                        <i class="fas fa-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
-                                        <i class="fas fa-angle-left"></i>
-                                    </a>
-                                </li>
-                            {% endif %}
-
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                                </span>
-                            </li>
-
-                            {% if page_obj.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
-                                        <i class="fas fa-angle-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">
-                                        <i class="fas fa-angle-double-right"></i>
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
+                {% include 'includes/pagination.html' with page_obj=page_obj %}
             {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-cube fa-3x text-muted mb-3"></i>

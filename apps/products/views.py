@@ -3,9 +3,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.db.models import Q, Case, When
+from django.db.models import Q, Case, When, Exists, OuterRef
 from django.contrib import messages
-from .models import Product
+from .models import Product, Category, Wishlist
 from .forms import ProductForm
 from apps.shops.models import Shop
 
@@ -17,22 +17,42 @@ class ProductListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Product.objects.filter(is_active=True).select_related('shop')
+        queryset = Product.objects.filter(is_active=True)
         search = self.request.GET.get('q', '').strip()
-        
+        category_slug = self.request.GET.get('category')
+
         if search:
             queryset = queryset.filter(
                 Q(name__icontains=search) |
-                Q(description__icontains=search) |
-                Q(shop__name__icontains=search)
-            ).distinct()
+                Q(description__icontains=search)
+            )
         
-        return queryset
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        
+        # Add wishlist annotation if user is authenticated
+        if self.request.user.is_authenticated:
+            queryset = queryset.annotate(
+                is_wishlisted=Exists(
+                    Wishlist.objects.filter(
+                        user=self.request.user,
+                        product=OuterRef('pk')
+                    )
+                )
+            )
+        
+        return queryset.select_related('category', 'shop').prefetch_related('images')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search = self.request.GET.get('q', '').strip()
+        category_slug = self.request.GET.get('category')
+        
         context['query'] = search
+        context['current_category'] = None
+        
+        if category_slug:
+            context['current_category'] = Category.objects.filter(slug=category_slug).first()
 
         if search:
             # Get matching shops
@@ -142,3 +162,27 @@ def toggle_status(request, pk):
     messages.success(request, f'Product {product.name} has been {status}.')
     
     return redirect('shops:shop_dashboard', slug=product.shop.slug)
+
+
+class WishlistView(LoginRequiredMixin, ListView):
+    model = Wishlist
+    template_name = 'products/wishlist.html'
+    context_object_name = 'wishlist_items'
+
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user).select_related('product', 'product__shop')
+
+
+@login_required
+def toggle_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    wishlist_item = Wishlist.objects.filter(user=request.user, product=product).first()
+    
+    if wishlist_item:
+        wishlist_item.delete()
+        messages.success(request, f"{product.name} removed from your wishlist")
+    else:
+        Wishlist.objects.create(user=request.user, product=product)
+        messages.success(request, f"{product.name} added to your wishlist")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'products:product_list'))

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Wishlist - PrintCraft{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'products/css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">
+        <i class="fas fa-heart me-2 text-danger"></i>My Wishlist
+    </h1>
+
+    {% if wishlist_items %}
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for item in wishlist_items %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm product-card">
+                        {% if item.product.images.exists %}
+                            <img src="{{ item.product.images.first.image.url }}" 
+                                 class="card-img-top product-image" 
+                                 alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="card-img-top product-image bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-cube fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title mb-1">{{ item.product.name }}</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-store me-1"></i>{{ item.product.shop.name }}
+                            </p>
+                            <p class="card-text small text-muted mb-3">
+                                {{ item.product.description|truncatechars:100 }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0">
+                                    <i class="fas fa-dollar-sign me-1"></i>{{ item.product.price }}
+                                </span>
+                                <div class="btn-group">
+                                    <a href="{% url 'products:product_detail' item.product.slug %}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <form method="post" action="{% url 'products:toggle_wishlist' item.product.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="fas fa-heart-broken me-1"></i>Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+            <h3>Your Wishlist is Empty</h3>
+            <p class="text-muted">Start adding items you'd like to purchase later!</p>
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+                <i class="fas fa-shapes me-2"></i>Browse Models
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
