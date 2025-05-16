@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
@@ -33,12 +33,7 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'products:product_list' %}">
-                            <i class="fas fa-cube me-1"></i>3D Models
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shops:shop_list' %}">
-                            <i class="fas fa-store me-1"></i>Shops
+                            <i class="fas fa-shapes me-1"></i>Marketplace
                         </a>
                     </li>
                 </ul>
@@ -104,17 +99,23 @@
         </div>
     {% endif %}
 
-    <main class="{% block main_class %}container py-4{% endblock %}">
+    <main class="flex-shrink-0 {% block main_class %}container py-4{% endblock %}">
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer class="footer mt-auto py-3 bg-light">
         <div class="container">
-            <div class="copyright">© 2025 PrintCraft. All rights reserved.</div>
-            <div class="footer-links">
-                <a href="{% url 'products:product_list' %}">Browse Models</a>
-                <a href="{% url 'shops:shop_list' %}">Find Shops</a>
-                <a href="mailto:support@printcraft.com">Contact</a>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center text-md-start">
+                    <div class="copyright">&copy; 2025 PrintCraft. All rights reserved.</div>
+                </div>
+                <div class="col-md-8">
+                    <div class="footer-links text-center text-md-end">
+                        <a href="{% url 'products:product_list' %}" class="me-3">Browse Models</a>
+                        <a href="{% url 'shops:shop_list' %}" class="me-3">Find Shops</a>
+                        <a href="mailto:support@printcraft.com">Contact</a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>

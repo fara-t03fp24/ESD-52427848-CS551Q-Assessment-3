@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} 3D Model - PrintCraft{% endblock %}
+{% block title %}
+    {% if form.instance.pk %}Edit{% else %}Create{% endif %} 3D Model - PrintCraft
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'products/css/products.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -200,12 +206,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-.form-switch .form-check-input {
-    width: 3em;
-}
-</style>
 {% endblock %}

@@ -45,7 +45,7 @@
             <i class="fas fa-cubes me-2"></i>Available 3D Models
         </h2>
         {% if request.user == shop.owner and products %}
-            <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+            <a href="{% url 'products:product_create' shop.slug %}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Add New Model
             </a>
         {% endif %}
@@ -82,7 +82,7 @@
             <i class="fas fa-cube fa-3x text-muted mb-3"></i>
             <p class="lead">No 3D models available yet.</p>
             {% if request.user == shop.owner %}
-                <a href="{% url 'products:product_create' %}" class="btn btn-primary">
+                <a href="{% url 'products:product_create' shop.slug %}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Add Your First Model
                 </a>
             {% endif %}

@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Case, When
 from django.contrib import messages
 from .models import Product
 from .forms import ProductForm
@@ -17,19 +17,38 @@ class ProductListView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        queryset = Product.objects.filter(is_active=True)
-        search = self.request.GET.get('search')
-        category = self.request.GET.get('category')
+        queryset = Product.objects.filter(is_active=True).select_related('shop')
+        search = self.request.GET.get('q', '').strip()
         
         if search:
-            queryset = queryset.filter(
+            # Search in products
+            product_results = queryset.filter(
                 Q(name__icontains=search) |
                 Q(description__icontains=search)
             )
-        if category:
-            queryset = queryset.filter(category__slug=category)
             
-        return queryset.select_related('category', 'seller')
+            # Search in shops
+            shop_results = Shop.objects.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+            
+            # Get products from matching shops
+            shop_products = queryset.filter(shop__in=shop_results)
+            
+            # Combine results and remove duplicates
+            queryset = (product_results | shop_products).distinct()
+            
+            # Prioritize products from matching shops and those with matching names
+            if shop_results.exists():
+                queryset = queryset.order_by('-shop__name__icontains', '-name__icontains', 'name')
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
 
 
 class ProductDetailView(DetailView):

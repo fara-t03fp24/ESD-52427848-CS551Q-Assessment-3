@@ -30,6 +30,19 @@
     color: #dee2e6;
 }
 
+/* Search Banner */
+.search-banner {
+    background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.search-banner h1 {
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
 /* Difficulty Level Badges */
 .badge.bg-easy-subtle {
     background-color: #d1e7dd;
@@ -107,6 +120,68 @@
     color: #0d6efd;
 }
 
+/* Product Form Styles */
+.form-switch .form-check-input {
+    width: 3em;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Image Upload Preview */
+.image-preview {
+    width: 100%;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.image-preview img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Current Images Grid */
+.current-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.image-card .remove-image {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.image-card .remove-image:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .filter-sidebar {
@@ -121,5 +196,13 @@
     .product-meta {
         flex-wrap: wrap;
         gap: 0.5rem;
+    }
+
+    .search-banner {
+        padding: 2rem 0;
+    }
+
+    .search-banner h1 {
+        font-size: 1.75rem;
     }
 }

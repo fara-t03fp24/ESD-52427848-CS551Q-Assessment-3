@@ -1,4 +1,8 @@
 /* User Profile Styles */
+html, body {
+    height: 100%;
+}
+
 .profile-header {
     position: relative;
     background: linear-gradient(135deg, #3182ce 0%, #4299e1 50%, #63b3ed 100%);
@@ -175,6 +179,29 @@
     font-size: 1.25rem;
 }
 
+/* Footer Styles */
+.footer {
+    flex-shrink: 0;
+    background: #f8f9fa;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.footer .copyright {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.footer-links a {
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #0d6efd;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .seller-stats {
@@ -193,5 +220,15 @@
 
     .profile-header .avatar i {
         font-size: 2.5rem;
+    }
+    
+    .footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-links {
+        margin-top: 1rem;
+        justify-content: center;
     }
 }
