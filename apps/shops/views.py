@@ -1,14 +1,20 @@
-from django.shortcuts import get_object_or_404
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Sum
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import datetime
 
-from apps.shops.models import Shop
-from apps.shops.forms import ShopForm
-from apps.orders.models import OrderItem
+# Local imports
+from .models import Shop
+from .forms import ShopForm
+from ..orders.models import OrderItem
 
 
 class ShopListView(ListView):
@@ -78,16 +84,26 @@ class ShopDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         shop = get_object_or_404(Shop, slug=self.kwargs['slug'])
         
-        # Get products with pagination
-        page = self.request.GET.get('page', 1)
-        stock_filter = self.request.GET.get('stock', 'all')
+        # Get products with search and filtering
         products = shop.products.all()
         
-        if stock_filter == 'in_stock':
+        # Handle search
+        search_query = self.request.GET.get('search')
+        if search_query:
+            products = products.filter(
+                Q(name__icontains=search_query) |
+                Q(id__icontains=search_query)
+            )
+            
+        # Handle stock filter
+        stock_filter = self.request.GET.get('stock')
+        if stock_filter == 'in':
             products = products.filter(stock__gt=0)
-        elif stock_filter == 'out_of_stock':
+        elif stock_filter == 'out':
             products = products.filter(stock=0)
             
+        # Pagination
+        page = self.request.GET.get('page', 1)
         paginator = Paginator(products, 10)  # Show 10 products per page
         
         try:
@@ -117,9 +133,20 @@ class ShopDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             'monthly_revenue': monthly_orders.aggregate(
                 total=Sum('product__price')
             )['total'] or 0,
-            
-            # Order statistics
             'delivered_orders': orders.filter(status='delivered').count(),
             'pending_orders': orders.filter(status='pending').count(),
         })
         return context
+
+
+@login_required
+def shop_select(request):
+    shop_slug = request.GET.get('shop_slug')
+    if not shop_slug:
+        return redirect('shops:shop_list')
+        
+    if shop_slug == 'create':
+        return redirect('shops:shop_create')
+        
+    shop = get_object_or_404(Shop, slug=shop_slug, owner=request.user)
+    return redirect('shops:shop_dashboard', slug=shop_slug)
