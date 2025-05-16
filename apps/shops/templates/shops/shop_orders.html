@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="{% static 'shops/css/shop_orders.css' %}">
 {% endblock %}
 
+{% block main_class %}{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
     {% include 'shops/includes/shop_sidebar.html' with active_tab='orders' %}
