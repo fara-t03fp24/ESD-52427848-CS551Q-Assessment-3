@@ -18,15 +18,22 @@
                 <img src="{% static 'images/icon.png' %}" alt="PrintCraft Logo" class="logo">
             </a>
             
-            <a href="#" class="catalog-btn d-none d-lg-flex" data-bs-toggle="dropdown">
-                <i class="fas fa-th"></i>
-                <span>Catalog</span>
-            </a>
-            
-            <a href="#" class="location-selector d-none d-lg-flex" data-bs-toggle="dropdown">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Select Location</span>
-            </a>
+            <div class="dropdown">
+                <button class="catalog-btn d-none d-lg-flex" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-th"></i>
+                    <span>Catalog</span>
+                </button>
+                <ul class="dropdown-menu catalog-dropdown">
+                    {% for category in categories %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'products:product_list' %}?category={{ category.slug }}">
+                                <i class="fas fa-cube"></i>
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -38,33 +45,12 @@
                         <input type="text" 
                                name="q" 
                                class="search-input" 
-                               placeholder="I'm looking for..." 
+                               placeholder="Input product name or shop name" 
                                value="{{ query }}"
                                autocomplete="off">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
-                        {% if search_results %}
-                        <div class="search-results">
-                            {% if search_results.shops %}
-                                <div class="search-category">Shops</div>
-                                {% for shop in search_results.shops %}
-                                    <a href="{% url 'shops:shop_detail' shop.slug %}" class="search-result-item">
-                                        <div class="shop-logo">
-                                            {% if shop.logo %}
-                                                <img src="{{ shop.logo.url }}" alt="{{ shop.name }}">
-                                            {% else %}
-                                                <i class="fas fa-store"></i>
-                                            {% endif %}
-                                        </div>
-                                        <div class="shop-info">
-                                            <div class="shop-name">{{ shop.name }} <i class="fas fa-chevron-right"></i></div>
-                                        </div>
-                                    </a>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        {% endif %}
                     </div>
                 </form>
                 
