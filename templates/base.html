@@ -104,7 +104,7 @@
         </div>
     {% endif %}
 
-    <main class="container py-4">
+    <main class="{% block main_class %}container py-4{% endblock %}">
         {% block content %}{% endblock %}
     </main>
 
